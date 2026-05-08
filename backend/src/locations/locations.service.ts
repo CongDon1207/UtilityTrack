@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { CreateLocationDto } from './dto/create-location.dto';
+import { UpdateLocationDto } from './dto/update-location.dto'
 
 export interface Location {
-  id: string;
-  name: string;
-  code?: string;
-  type: string;
-  address?: string;
-  isActive: boolean;
+    id: string;
+    name: string;
+    code?: string;
+    type: string;
+    address?: string;
+    isActive: boolean;
 }
 
 @Injectable()
@@ -58,4 +59,22 @@ export class LocationsService {
         this.locations.push(newLocation);
         return newLocation;
     }
+
+    update(id: string, data: UpdateLocationDto) {
+        const location = this.findOne(id);
+
+        Object.assign(location, data);
+
+        return location;
+    }
+
+    remove(id: string) {
+        const location = this.findOne(id);
+
+        location.isActive = false;
+
+        return location;
+    }
+
+
 }

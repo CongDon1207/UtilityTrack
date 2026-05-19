@@ -17,9 +17,6 @@ export class ElectricityRecordEntity {
   @Column({ name: 'RECORD_MONTH', type: 'number', precision: 2 })
   recordMonth!: number;
 
-  @Column({ name: 'LOCATION', type: 'varchar2', length: 50 })
-  location!: string;
-
   @Column({ name: 'DEPARTMENT_GROUP', type: 'varchar2', length: 150 })
   departmentGroup!: string;
 

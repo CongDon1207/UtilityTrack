@@ -10,16 +10,26 @@ import {
 } from '@nestjs/common';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { CreateElectricityRecordDto } from './dto/create-electricity-record.dto';
+import { ElectricityReportQueryDto } from './dto/electricity-report-query.dto';
 import { UpdateElectricityRecordDto } from './dto/update-electricity-record.dto';
+import { ElectricityReportService } from './electricity-report.service';
 import { ElectricityService } from './electricity.service';
 
 @Controller('electricity-records')
 export class ElectricityController {
-  constructor(private readonly electricityService: ElectricityService) {}
+  constructor(
+    private readonly electricityService: ElectricityService,
+    private readonly electricityReportService: ElectricityReportService,
+  ) {}
 
   @Get()
   findAll(@Query() query: PaginationQueryDto) {
     return this.electricityService.findAll(query);
+  }
+
+  @Get('report')
+  getReport(@Query() query: ElectricityReportQueryDto) {
+    return this.electricityReportService.getReport(query);
   }
 
   @Get(':id')

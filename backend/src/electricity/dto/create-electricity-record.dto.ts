@@ -27,10 +27,6 @@ export class CreateElectricityRecordDto {
     'LASTING',
     'PHONG_TECH_MOI',
   ])
-  location!: string;
-
-  @IsString()
-  @IsNotEmpty()
   departmentGroup!: string;
 
   @IsNumber()

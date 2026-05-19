@@ -16,6 +16,7 @@
 - File Length Limit: Keep every file under 300 LOC; if a change would exceed this, pause and propose a refactor or split plan.
 - Configuration and Secrets: Load all secrets or config from environment variables only; never hardcode.
 - When writing code, aim for simplicity and readability, not just brevity. Short code that is hard to read is worse than slightly longer code that is clear.
+- UI Markup Readability: In JSX/HTML, separate major layout sections and nested hierarchy with blank lines so the structure is easy to scan. Add short English comments only for large sections when they improve readability; avoid commenting every small element.
 - Clean Up Temporary Files: Delete any temporary test files immediately after use.
 
 ### Core Directives

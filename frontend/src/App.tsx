@@ -1,5 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { ElectricityRecordsPage } from './features/electricity';
+import {
+  ElectricityRecordsPage,
+  ElectricityReportPage,
+} from './features/electricity';
 
 function App() {
   return (
@@ -8,6 +11,10 @@ function App() {
       <Route
         path="/electricity-records"
         element={<ElectricityRecordsPage />}
+      />
+      <Route
+        path="/electricity-records/report"
+        element={<ElectricityReportPage />}
       />
     </Routes>
   );

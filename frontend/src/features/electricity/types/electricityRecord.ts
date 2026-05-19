@@ -1,4 +1,4 @@
-export type ElectricityLocation =
+export type ElectricityDepartmentGroup =
   | 'MAY_MAY_DIEN_TU_VAN_PHONG_NHA_BEP_KHO'
   | 'CAT_CHUAN_BI_UV_TECH_CU'
   | 'LASTING'
@@ -8,8 +8,7 @@ export type ElectricityRecord = {
   id: number;
   recordYear: number;
   recordMonth: number;
-  location: ElectricityLocation;
-  departmentGroup: string;
+  departmentGroup: ElectricityDepartmentGroup;
   kwhUsed: number;
   totalCost: number;
   note?: string;
@@ -20,8 +19,7 @@ export type ElectricityRecord = {
 export type CreateElectricityRecordInput = {
   recordYear: number;
   recordMonth: number;
-  location: ElectricityLocation;
-  departmentGroup: string;
+  departmentGroup: ElectricityDepartmentGroup;
   kwhUsed: number;
   totalCost: number;
   note?: string;

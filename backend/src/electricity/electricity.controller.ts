@@ -7,11 +7,15 @@ import {
   Patch,
   Post,
   Query,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { CreateElectricityRecordDto } from './dto/create-electricity-record.dto';
 import { ElectricityReportQueryDto } from './dto/electricity-report-query.dto';
 import { UpdateElectricityRecordDto } from './dto/update-electricity-record.dto';
+import { ElectricityExportService } from './electricity-export.service';
 import { ElectricityReportService } from './electricity-report.service';
 import { ElectricityService } from './electricity.service';
 
@@ -20,6 +24,7 @@ export class ElectricityController {
   constructor(
     private readonly electricityService: ElectricityService,
     private readonly electricityReportService: ElectricityReportService,
+    private readonly electricityExportService: ElectricityExportService,
   ) {}
 
   @Get()
@@ -30,6 +35,24 @@ export class ElectricityController {
   @Get('report')
   getReport(@Query() query: ElectricityReportQueryDto) {
     return this.electricityReportService.getReport(query);
+  }
+
+  @Get('export')
+  async exportReport(
+    @Query() query: ElectricityReportQueryDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const exportedReport = await this.electricityExportService.exportReport(
+      query,
+    );
+
+    response.set({
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="${exportedReport.filename}"`,
+    });
+
+    return new StreamableFile(exportedReport.buffer);
   }
 
   @Get(':id')

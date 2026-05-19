@@ -7,12 +7,12 @@ export type LocationType =
     | 'other';
 
 export type Location = {
-    id: string;
+    id: number;
     name: string;
     code?: string;
     type: LocationType;
     address?: string;
-    isActive: boolean;
+    isActive: number;
 };
 
 export type CreateLocationInput = {
@@ -21,3 +21,5 @@ export type CreateLocationInput = {
   type: LocationType;
   address?: string;
 };
+
+export type UpdateLocationInput = Partial<CreateLocationInput>;

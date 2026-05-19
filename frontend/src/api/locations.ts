@@ -1,4 +1,8 @@
-import type { Location, CreateLocationInput } from '../types/location';
+import type { 
+  Location, 
+  CreateLocationInput,
+  UpdateLocationInput
+} from '../types/location';
 
 const API_BASE_URL = 'http://localhost:3000';
 
@@ -27,6 +31,39 @@ export async function createLocation(
 
   if (!res.ok) {
     throw new Error('Failed to create location');
+  }
+
+  return res.json();
+}
+
+export async function updateLocation(
+  id: number,
+  input: UpdateLocationInput,
+) : Promise<Location> {
+  const res = await fetch(`${API_BASE_URL}/locations/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type':'application/json',
+    },
+    body: JSON.stringify(input),
+  })
+
+  if(!res.ok){
+    throw new Error('Failed to update location')
+  }
+
+  return res.json()
+}
+
+export async function deleteLocation(
+  id: number,
+) : Promise<Location> {
+  const res = await fetch(`${API_BASE_URL}/locations/${id}`,{
+    method: 'DELETE',
+  })
+
+  if(!res.ok){
+    throw new Error('Failed to delete location');
   }
 
   return res.json();

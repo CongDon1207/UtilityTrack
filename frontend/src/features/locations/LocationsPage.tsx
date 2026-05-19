@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createLocation, getLocations } from '../../api/locations';
-import type { CreateLocationInput, LocationType } from '../../types/location';
+import { createLocation, getLocations, deleteLocation, updateLocation } from '../../api/locations';
+import type { CreateLocationInput, LocationType, Location } from '../../types/location';
 
 const locationTypes: LocationType[] = [
     'home',
@@ -17,12 +17,15 @@ export function LocationsPage() {
     const queryClient = useQueryClient();
 
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingLocationId, setEditingLocationId] = useState<number | null>(null)
     const [formData, setFormData] = useState<CreateLocationInput>({
         name: '',
         code: '',
         type: 'office',
         address: '',
     });
+
+
 
 
     const {
@@ -48,18 +51,71 @@ export function LocationsPage() {
         },
     });
 
+    const updateMutation = useMutation({
+        mutationFn: ({
+            id,
+            input,
+        }: {
+            id: number;
+            input: CreateLocationInput;
+        }) => updateLocation(id, input),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['locations'] });
+            setFormData({
+                name: '',
+                code: '',
+                type: 'office',
+                address: '',
+            });
+            setEditingLocationId(null);
+            setIsFormOpen(false);
+        },
+    });
+
+
+    const deleteMutation = useMutation({
+        mutationFn: deleteLocation,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['locations'] });
+        },
+    });
+
+
     const activeCount = locations.filter((location) => location.isActive).length;
+
+    function startEdit(location: Location) {
+        setEditingLocationId(location.id);
+        setFormData({
+            name: location.name,
+            code: location.code ?? '',
+            type: location.type,
+            address: location.address ?? '',
+        });
+        setIsFormOpen(true);
+    }
+
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        createMutation.mutate({
+        const input = {
             name: formData.name,
             code: formData.code || undefined,
             type: formData.type,
             address: formData.address || undefined,
-        });
+        };
+
+        if (editingLocationId) {
+            updateMutation.mutate({
+                id: editingLocationId,
+                input,
+            });
+            return;
+        }
+
+        createMutation.mutate(input);
     }
+
 
     if (isLoading) {
         return (
@@ -212,6 +268,7 @@ export function LocationsPage() {
                                 <th className="px-4 py-3 font-medium">Type</th>
                                 <th className="px-4 py-3 font-medium">Address</th>
                                 <th className="px-4 py-3 font-medium">Status</th>
+                                <th className="px-4 py-3 font-medium">Actions</th>
                             </tr>
                         </thead>
 
@@ -237,12 +294,34 @@ export function LocationsPage() {
                                             {location.isActive ? 'Active' : 'Inactive'}
                                         </span>
                                     </td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => startEdit(location)}
+                                                className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
+                                            >
+                                                Edit
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => deleteMutation.mutate(location.id)}
+                                                disabled={!location.isActive || deleteMutation.isPending}
+                                                className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400"
+                                            >
+                                                Disable
+                                            </button>
+                                        </div>
+                                    </td>
+
+
                                 </tr>
                             ))}
 
                             {locations.length === 0 && (
                                 <tr>
-                                    <td className="px-4 py-6 text-slate-500" colSpan={5}>
+                                    <td className="px-4 py-6 text-slate-500" colSpan={6}>
                                         No locations found.
                                     </td>
                                 </tr>

@@ -12,12 +12,12 @@ import {
 export class CreateElectricityRecordDto {
   @IsInt()
   @Min(2000)
-  recordYear: number;
+  recordYear!: number;
 
   @IsInt()
   @Min(1)
   @Max(12)
-  recordMonth: number;
+  recordMonth!: number;
 
   @IsString()
   @IsNotEmpty()
@@ -27,19 +27,19 @@ export class CreateElectricityRecordDto {
     'LASTING',
     'PHONG_TECH_MOI',
   ])
-  location: string;
+  location!: string;
 
   @IsString()
   @IsNotEmpty()
-  departmentGroup: string;
+  departmentGroup!: string;
 
   @IsNumber()
   @Min(0)
-  kwhUsed: number;
+  kwhUsed!: number;
 
   @IsNumber()
   @Min(0)
-  totalCost: number;
+  totalCost!: number;
 
   @IsOptional()
   @IsString()

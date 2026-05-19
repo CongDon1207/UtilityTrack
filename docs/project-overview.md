@@ -2,9 +2,9 @@
 
 ## Purpose
 
-UtilityTrack is planned as a utility management system for tracking electricity, water, fuel, and related operational costs. The long-term goal is to collect usage records, calculate costs, and provide dashboards that help users monitor trends, compare locations, and detect abnormal consumption.
+UtilityTrack is a utility management system for tracking operational utility usage and cost. The current implementation starts with electricity records first.
 
-The project is currently in the early backend setup stage. The frontend has not been created yet.
+The electricity module stores monthly electricity usage and cost by fixed location option and department group.
 
 ## Current Repository Structure
 
@@ -13,20 +13,33 @@ UtilityTrack/
   README.md
   docs/
     project-overview.md
+    schema/
+      electricity-records.md
+      electricity-records.oracle.sql
+    Sample_data/
+      BẢNG CHI TIẾT SỬ DỤNG ĐIỆN CỦA CÁC BỘ PHẬN 2024.xlsx
+      KM_xe.xlsx
+      ĐỔ DẦU.xlsx
   backend/
     src/
       app.module.ts
       app.service.ts
       main.ts
-      locations/
+      common/
         dto/
-          create-location.dto.ts
-        locations.controller.ts
-        locations.module.ts
-        locations.service.ts
-    package.json
-    pnpm-lock.yaml
-    tsconfig.json
+          pagination-query.dto.ts
+      electricity/
+        dto/
+          create-electricity-record.dto.ts
+          update-electricity-record.dto.ts
+        electricity-record.entity.ts
+        electricity.controller.ts
+        electricity.module.ts
+        electricity.service.ts
+  frontend/
+    src/
+      App.tsx
+      main.tsx
 ```
 
 ## Current Backend Stack
@@ -36,196 +49,147 @@ UtilityTrack/
 - Language: TypeScript
 - Package manager: pnpm
 - Validation: class-validator and class-transformer
-- Database: not added yet
-- Authentication: not added yet
+- Database: Oracle
+- ORM: TypeORM
 
 ## Current Backend Behavior
 
-The backend currently contains one feature module: `locations`.
+The backend currently contains one domain feature module: `electricity`.
 
-Locations represent physical or business places where utility data will later be tracked. Examples include offices, factories, warehouses, homes, rental rooms, or other managed sites.
+The `ElectricityModule` is imported into the root `AppModule`, so the routes declared in `ElectricityController` are active.
 
-The `LocationsModule` is imported into the root `AppModule`, so the routes declared in `LocationsController` are active.
-
-## Current Locations Module
+## Current Electricity Module
 
 ### Files
 
 ```txt
-backend/src/locations/
+backend/src/electricity/
   dto/
-    create-location.dto.ts
-  locations.controller.ts
-  locations.module.ts
-  locations.service.ts
+    create-electricity-record.dto.ts
+    update-electricity-record.dto.ts
+  electricity-record.entity.ts
+  electricity.controller.ts
+  electricity.module.ts
+  electricity.service.ts
 ```
 
 ### Responsibilities
 
-`locations.module.ts`
+`electricity-record.entity.ts`
 
-Registers the controller and service for the locations feature.
+Maps the Oracle `ELECTRICITY_RECORDS` table to TypeORM.
 
-`locations.controller.ts`
+`create-electricity-record.dto.ts`
+
+Defines and validates the request body for creating an electricity record.
+
+`update-electricity-record.dto.ts`
+
+Defines the optional request body for updating an electricity record.
+
+`electricity.service.ts`
+
+Contains electricity record business logic and database operations.
+
+`electricity.controller.ts`
 
 Defines HTTP endpoints under:
 
 ```txt
-/locations
+/electricity-records
 ```
 
-`locations.service.ts`
+`electricity.module.ts`
 
-Contains the current business logic and stores temporary in-memory location data.
-
-`create-location.dto.ts`
-
-Defines the expected request body shape for creating a location and includes validation decorators.
+Registers the electricity entity, controller, and service.
 
 ## Current API Endpoints
 
-### Get all locations
+### Get electricity records
 
 ```txt
-GET /locations
+GET /electricity-records
+GET /electricity-records?page=1&limit=10
 ```
 
-Returns the current in-memory list of locations.
+Returns paginated electricity records.
 
-### Get one location by id
+### Get one electricity record by id
 
 ```txt
-GET /locations/:id
+GET /electricity-records/:id
 ```
 
-Returns a single location when found.
+Returns a single electricity record when found.
 
 If the id does not exist, the service throws a NestJS `NotFoundException`, which produces a `404 Not Found` response.
 
-### Create a location
+### Create an electricity record
 
 ```txt
-POST /locations
+POST /electricity-records
 ```
 
 Expected JSON body:
 
 ```json
 {
-  "name": "Nha kho Quan 7",
-  "code": "WAREHOUSE-Q7",
-  "type": "warehouse",
-  "address": "Quan 7, TP HCM"
+  "recordYear": 2025,
+  "recordMonth": 1,
+  "location": "MAY_MAY_DIEN_TU_VAN_PHONG_NHA_BEP_KHO",
+  "departmentGroup": "MAY",
+  "kwhUsed": 22109,
+  "totalCost": 54350205,
+  "note": "Imported from electricity workbook"
 }
 ```
 
-Supported `type` values:
+Supported `location` values:
 
 ```txt
-home
-office
-factory
-warehouse
-rental_room
-other
+MAY_MAY_DIEN_TU_VAN_PHONG_NHA_BEP_KHO
+CAT_CHUAN_BI_UV_TECH_CU
+LASTING
+PHONG_TECH_MOI
 ```
 
-The created location is currently stored only in memory. It will be lost when the backend process restarts.
-
-## Current Validation Setup
-
-Global validation is enabled in `backend/src/main.ts` with `ValidationPipe`.
-
-Current behavior:
-
-- Unknown fields are rejected.
-- DTO decorators are used to validate request bodies.
-- Invalid requests return `400 Bad Request`.
-
-The current `CreateLocationDto` validates:
-
-- `name`: required string
-- `code`: optional string
-- `type`: required string and must be one of the allowed location types
-- `address`: optional string
-
-## How To Run The Backend
-
-From the backend directory:
-
-```powershell
-cd F:\workplace\UtilityTrack\backend
-pnpm install
-pnpm run dev
-```
-
-The development server runs in watch mode and usually listens on:
+### Update an electricity record
 
 ```txt
-http://localhost:3000
+PATCH /electricity-records/:id
 ```
 
-Useful checks:
+### Delete an electricity record
 
 ```txt
-GET http://localhost:3000/locations
-GET http://localhost:3000/locations/1
+DELETE /electricity-records/:id
 ```
 
-## Current Limitations
+The current implementation deletes electricity records directly because the schema does not include a soft-delete column.
 
-- Data is stored in memory only.
-- No database integration yet.
-- No authentication or authorization yet.
-- No update or delete endpoints yet.
-- No meter, reading, fuel, expense, bill, or dashboard modules yet.
-- No Swagger documentation yet.
-- No frontend application yet.
+## Current Frontend Behavior
 
-## Recommended Next Backend Steps
-
-1. Add `PATCH /locations/:id` for updating location records.
-2. Add `DELETE /locations/:id` or soft-delete support using `isActive`.
-3. Add a shared type or entity file for the `Location` model instead of keeping the interface inside the service.
-4. Add Prisma and PostgreSQL for persistent storage.
-5. Replace the in-memory locations array with database queries.
-6. Add modules for meters and meter readings.
-7. Add fuel records and expense modules.
-8. Add dashboard/report endpoints after enough data exists.
-
-## Planned Domain Model
-
-The project will likely evolve around these main entities:
+The frontend is being reset around electricity records. The root route redirects to:
 
 ```txt
-Location
-Meter
-MeterReading
-FuelRecord
-Expense
-Bill
-Alert
-DashboardReport
+/electricity-records
 ```
 
-Expected relationship direction:
+The current page is a placeholder for the future electricity records management screen.
+
+## Schema Notes
+
+The current electricity schema is documented in:
 
 ```txt
-Location -> Meter -> MeterReading
-Location -> FuelRecord
-Location -> Expense
-Location -> Bill
+docs/schema/electricity-records.md
 ```
 
-`Location` is intentionally the first module because most later records will belong to a location.
+The table intentionally does not store derived values such as previous-month difference. Those values should be calculated in reporting queries or API responses.
 
-## Development Notes
+## Recommended Next Steps
 
-This project is currently being built step by step. The first goal is to understand and implement clean NestJS module structure before adding database complexity.
-
-The current learning path is:
-
-```txt
-Controller -> Service -> DTO -> Validation -> CRUD -> Database
-```
-
+1. Build the frontend electricity records page.
+2. Add frontend API helpers and types for electricity records.
+3. Add create, list, update, and delete UI flows.
+4. Add focused API tests after the CRUD surface stabilizes.

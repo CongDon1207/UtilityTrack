@@ -3,6 +3,7 @@ export type ElectricityReportRow = {
   kwhUsed: number;
   totalCost: number;
   costDiffFromPreviousMonth: number | null;
+  note?: string;
 };
 
 export type ElectricityReportGroup = {

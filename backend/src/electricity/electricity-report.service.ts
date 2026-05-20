@@ -75,6 +75,7 @@ export class ElectricityReportService {
         costDiffFromPreviousMonth: previousRecord
           ? record.totalCost - previousRecord.totalCost
           : null,
+        note: record.note,
       };
     });
   }

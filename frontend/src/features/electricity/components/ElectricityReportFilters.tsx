@@ -17,7 +17,7 @@ export function ElectricityReportFilters({
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <div className="grid gap-4 sm:grid-cols-3">
         <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-          Year
+          Năm
           <input
             className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
             min="2000"
@@ -28,7 +28,7 @@ export function ElectricityReportFilters({
         </label>
 
         <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-          Month
+          Tháng
           <select
             className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
             value={month}
@@ -38,10 +38,10 @@ export function ElectricityReportFilters({
               )
             }
           >
-            <option value="">All months</option>
+            <option value="">Tất cả tháng</option>
             {months.map((monthValue) => (
               <option key={monthValue} value={monthValue}>
-                Month {monthValue}
+                Tháng {monthValue}
               </option>
             ))}
           </select>

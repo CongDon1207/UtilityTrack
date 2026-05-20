@@ -24,6 +24,6 @@ export async function getElectricityReport({
 
   return parseJsonResponse<ElectricityReportResponse>(
     response,
-    'Failed to load electricity report',
+    'Không tải được báo cáo điện',
   );
 }

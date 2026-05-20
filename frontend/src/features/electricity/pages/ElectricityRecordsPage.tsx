@@ -77,10 +77,10 @@ export function ElectricityRecordsPage() {
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="text-2xl font-semibold text-slate-950">
-                Electricity Records
+                Quản lý điện
               </h1>
               <p className="mt-2 max-w-2xl text-sm text-slate-600">
-                Manage monthly electricity usage and cost by department group.
+                Quản lý sản lượng điện tiêu thụ và chi phí hằng tháng theo bộ phận.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -88,10 +88,10 @@ export function ElectricityRecordsPage() {
                 className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm"
                 to="/electricity-records/report"
               >
-                View report
+                Xem báo cáo
               </Link>
               <div className="rounded-md border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm">
-                <span className="text-slate-500">Total records</span>
+                <span className="text-slate-500">Tổng số bản ghi</span>
                 <strong className="ml-2 text-slate-950">{meta.total}</strong>
               </div>
             </div>
@@ -120,7 +120,7 @@ export function ElectricityRecordsPage() {
 
         {isLoading ? (
           <p className="rounded-md border border-slate-200 bg-white px-4 py-8 text-center text-sm text-slate-500 shadow-sm">
-            Loading electricity records...
+            Đang tải dữ liệu điện...
           </p>
         ) : error ? (
           <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

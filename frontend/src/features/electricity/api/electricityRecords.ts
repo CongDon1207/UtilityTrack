@@ -16,7 +16,7 @@ export async function getElectricityRecords(
 
   return parseJsonResponse<ElectricityRecordsResponse>(
     response,
-    'Failed to load electricity records',
+    'Không tải được dữ liệu điện',
   );
 }
 
@@ -27,7 +27,7 @@ export async function getElectricityRecord(
 
   return parseJsonResponse<ElectricityRecord>(
     response,
-    'Failed to load electricity record',
+    'Không tải được bản ghi điện',
   );
 }
 
@@ -44,7 +44,7 @@ export async function createElectricityRecord(
 
   return parseJsonResponse<ElectricityRecord>(
     response,
-    'Failed to create electricity record',
+    'Không tạo được bản ghi điện',
   );
 }
 
@@ -62,7 +62,7 @@ export async function updateElectricityRecord(
 
   return parseJsonResponse<ElectricityRecord>(
     response,
-    'Failed to update electricity record',
+    'Không cập nhật được bản ghi điện',
   );
 }
 
@@ -75,6 +75,6 @@ export async function deleteElectricityRecord(
 
   return parseJsonResponse<{ deleted: boolean }>(
     response,
-    'Failed to delete electricity record',
+    'Không xóa được bản ghi điện',
   );
 }

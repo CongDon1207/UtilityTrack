@@ -5,7 +5,7 @@ type ElectricityReportTableProps = {
   report: ElectricityReportResponse;
 };
 
-const numberFormatter = new Intl.NumberFormat('en-US');
+const numberFormatter = new Intl.NumberFormat('vi-VN');
 
 function formatDiff(value: number | null) {
   if (value === null) {
@@ -21,7 +21,7 @@ export function ElectricityReportTable({ report }: ElectricityReportTableProps) 
   if (report.groups.length === 0) {
     return (
       <section className="rounded-lg border border-slate-200 bg-white px-4 py-10 text-center text-sm text-slate-500 shadow-sm">
-        No report data found.
+        Không tìm thấy dữ liệu báo cáo.
       </section>
     );
   }
@@ -30,7 +30,7 @@ export function ElectricityReportTable({ report }: ElectricityReportTableProps) 
     <section className="overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm">
       <div className="border-b border-slate-200 bg-slate-100 px-4 py-3 text-center">
         <h2 className="text-sm font-bold uppercase text-slate-950">
-          BANG CHI TIET SU DUNG DIEN CUA CAC BO PHAN TRONG NAM {report.year}
+          BẢNG CHI TIẾT SỬ DỤNG ĐIỆN CỦA CÁC BỘ PHẬN TRONG NĂM {report.year}
         </h2>
       </div>
 
@@ -39,19 +39,19 @@ export function ElectricityReportTable({ report }: ElectricityReportTableProps) 
           <thead>
             <tr className="bg-slate-50 text-slate-700">
               <th className="w-44 border border-slate-300 px-3 py-2 text-center font-semibold">
-                BO PHAN
+                BỘ PHẬN
               </th>
               <th className="w-20 border border-slate-300 px-3 py-2 text-center font-semibold">
-                THANG
+                THÁNG
               </th>
               <th className="border border-slate-300 px-3 py-2 text-right font-semibold">
-                SO DIEN SU DUNG (KW)
+                SỐ ĐIỆN SỬ DỤNG (KW)
               </th>
               <th className="border border-slate-300 px-3 py-2 text-right font-semibold">
-                SO TIEN
+                SỐ TIỀN
               </th>
               <th className="border border-slate-300 px-3 py-2 text-right font-semibold">
-                CHENH LECH SO VOI THANG TRUOC
+                CHÊNH LỆCH SO VỚI THÁNG TRƯỚC
               </th>
             </tr>
           </thead>
@@ -89,7 +89,7 @@ export function ElectricityReportTable({ report }: ElectricityReportTableProps) 
                   key={`${group.departmentGroup}-summary`}
                 >
                   <td className="border border-slate-300 px-3 py-2 text-center">
-                    TONG
+                    TỔNG
                   </td>
                   <td className="border border-slate-300 px-3 py-2" />
                   <td className="border border-slate-300 px-3 py-2 text-right tabular-nums">

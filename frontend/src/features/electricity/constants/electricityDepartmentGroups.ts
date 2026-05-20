@@ -6,11 +6,11 @@ export const electricityDepartmentGroupOptions: {
 }[] = [
   {
     value: 'MAY_MAY_DIEN_TU_VAN_PHONG_NHA_BEP_KHO',
-    label: 'May, may dien tu, van phong, nha bep, kho',
+    label: 'May, máy điện tử, văn phòng, nhà bếp, kho',
   },
   {
     value: 'CAT_CHUAN_BI_UV_TECH_CU',
-    label: 'Cat, chuan bi, UV, tech cu',
+    label: 'Cắt, chuẩn bị, UV, tech cũ',
   },
   {
     value: 'LASTING',
@@ -18,7 +18,7 @@ export const electricityDepartmentGroupOptions: {
   },
   {
     value: 'PHONG_TECH_MOI',
-    label: 'Phong tech moi',
+    label: 'Phòng tech mới',
   },
 ];
 

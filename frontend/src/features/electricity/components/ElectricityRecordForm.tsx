@@ -87,16 +87,16 @@ export function ElectricityRecordForm({
     >
       <div className="flex flex-col gap-1">
         <h2 className="text-base font-semibold text-slate-950">
-          {editingRecord ? 'Edit electricity record' : 'New electricity record'}
+          {editingRecord ? 'Sửa dữ liệu điện' : 'Thêm dữ liệu điện'}
         </h2>
         <p className="text-sm text-slate-500">
-          Monthly usage and cost by department group.
+          Sản lượng điện và chi phí hằng tháng theo bộ phận.
         </p>
       </div>
 
       <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-          Year
+          Năm
           <input
             className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
             min="2000"
@@ -108,7 +108,7 @@ export function ElectricityRecordForm({
         </label>
 
         <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-          Month
+          Tháng
           <input
             className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
             max="12"
@@ -121,7 +121,7 @@ export function ElectricityRecordForm({
         </label>
 
         <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700 md:col-span-2 xl:col-span-1">
-          Department group
+          Bộ phận
           <select
             className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
             required
@@ -142,7 +142,7 @@ export function ElectricityRecordForm({
         </label>
 
         <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-          kWh used
+          Số điện sử dụng (kWh)
           <input
             className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
             min="0"
@@ -155,7 +155,7 @@ export function ElectricityRecordForm({
         </label>
 
         <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-          Total cost
+          Tổng chi phí
           <input
             className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
             min="0"
@@ -169,7 +169,7 @@ export function ElectricityRecordForm({
       </div>
 
       <label className="mt-4 flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-        Note
+        Ghi chú
         <textarea
           className="min-h-24 rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
           value={formData.note}
@@ -184,10 +184,10 @@ export function ElectricityRecordForm({
           type="submit"
         >
           {isSubmitting
-            ? 'Saving...'
+            ? 'Đang lưu...'
             : editingRecord
-              ? 'Save changes'
-              : 'Create record'}
+              ? 'Lưu thay đổi'
+              : 'Tạo bản ghi'}
         </button>
 
         {editingRecord && (
@@ -197,7 +197,7 @@ export function ElectricityRecordForm({
             type="button"
             onClick={onCancelEdit}
           >
-            Cancel edit
+            Hủy sửa
           </button>
         )}
       </div>

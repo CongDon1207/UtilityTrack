@@ -8,7 +8,7 @@ type ElectricityRecordsTableProps = {
   onEdit: (record: ElectricityRecord) => void;
 };
 
-const numberFormatter = new Intl.NumberFormat('en-US');
+const numberFormatter = new Intl.NumberFormat('vi-VN');
 
 export function ElectricityRecordsTable({
   records,
@@ -22,12 +22,12 @@ export function ElectricityRecordsTable({
         <table className="min-w-full border-collapse text-left text-sm">
           <thead className="bg-slate-100 text-xs uppercase text-slate-500">
             <tr>
-              <th className="px-4 py-3 font-semibold">Period</th>
-              <th className="px-4 py-3 font-semibold">Department group</th>
+              <th className="px-4 py-3 font-semibold">Kỳ</th>
+              <th className="px-4 py-3 font-semibold">Bộ phận</th>
               <th className="px-4 py-3 text-right font-semibold">kWh</th>
-              <th className="px-4 py-3 text-right font-semibold">Cost</th>
-              <th className="px-4 py-3 font-semibold">Note</th>
-              <th className="px-4 py-3 text-right font-semibold">Actions</th>
+              <th className="px-4 py-3 text-right font-semibold">Chi phí</th>
+              <th className="px-4 py-3 font-semibold">Ghi chú</th>
+              <th className="px-4 py-3 text-right font-semibold">Thao tác</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -55,7 +55,7 @@ export function ElectricityRecordsTable({
                       type="button"
                       onClick={() => onEdit(record)}
                     >
-                      Edit
+                      Sửa
                     </button>
                     <button
                       className="rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 disabled:cursor-not-allowed disabled:text-red-300"
@@ -63,7 +63,7 @@ export function ElectricityRecordsTable({
                       type="button"
                       onClick={() => onDelete(record.id)}
                     >
-                      {isDeletingId === record.id ? 'Deleting...' : 'Delete'}
+                      {isDeletingId === record.id ? 'Đang xóa...' : 'Xóa'}
                     </button>
                   </div>
                 </td>
@@ -73,7 +73,7 @@ export function ElectricityRecordsTable({
             {records.length === 0 && (
               <tr>
                 <td className="px-4 py-10 text-center text-slate-500" colSpan={6}>
-                  No electricity records found.
+                  Không tìm thấy dữ liệu điện.
                 </td>
               </tr>
             )}

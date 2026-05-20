@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { getElectricityExportUrl } from '../api/electricityExport';
 import { getElectricityReport } from '../api/electricityReport';
+import { ElectricityReportDashboard } from '../components/ElectricityReportDashboard';
 import { ElectricityReportFilters } from '../components/ElectricityReportFilters';
 import { ElectricityReportTable } from '../components/ElectricityReportTable';
 
@@ -72,7 +73,10 @@ export function ElectricityReportPage() {
             {error.message}
           </p>
         ) : data ? (
-          <ElectricityReportTable report={data} />
+          <>
+            <ElectricityReportDashboard report={data} />
+            <ElectricityReportTable report={data} />
+          </>
         ) : null}
       </div>
     </main>

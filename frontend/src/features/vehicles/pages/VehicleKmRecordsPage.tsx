@@ -1,0 +1,221 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import {
+  createVehicleKmRecord,
+  deleteVehicleKmRecord,
+  getVehicleKmRecords,
+  getVehicles,
+  updateVehicleKmRecord,
+} from '../api/vehicles';
+import {
+  VehicleKmRecordForm,
+  type VehicleKmRecordFormState,
+} from '../components/VehicleKmRecordForm';
+import { VehicleKmRecordsTable } from '../components/VehicleKmRecordsTable';
+import type {
+  CreateVehicleKmRecordInput,
+  VehicleKmRecord,
+} from '../types/vehicle';
+
+const pageSize = 10;
+
+const emptyFormState: VehicleKmRecordFormState = {
+  vehicleId: '',
+  tripDate: new Date().toISOString().slice(0, 10),
+  driverName: '',
+  tripPurpose: '',
+  departureTime: '',
+  departureOdometer: '',
+  arrivalTime: '',
+  arrivalOdometer: '',
+  note: '',
+};
+
+function getFormState(record: VehicleKmRecord): VehicleKmRecordFormState {
+  return {
+    vehicleId: String(record.vehicleId),
+    tripDate: record.tripDate.slice(0, 10),
+    driverName: record.driverName ?? '',
+    tripPurpose: record.tripPurpose ?? '',
+    departureTime: record.departureTime ?? '',
+    departureOdometer: String(record.departureOdometer),
+    arrivalTime: record.arrivalTime ?? '',
+    arrivalOdometer: String(record.arrivalOdometer),
+    note: record.note ?? '',
+  };
+}
+
+export function VehicleKmRecordsPage() {
+  const queryClient = useQueryClient();
+  const [page, setPage] = useState(1);
+  const [editingRecord, setEditingRecord] = useState<VehicleKmRecord | null>(
+    null,
+  );
+  const [formData, setFormData] = useState<VehicleKmRecordFormState>(
+    emptyFormState,
+  );
+  const [deletingRecordId, setDeletingRecordId] = useState<number | null>(null);
+
+  const vehiclesQuery = useQuery({
+    queryKey: ['vehicles', 'all'],
+    queryFn: () => getVehicles(1, 100),
+  });
+
+  const recordsQuery = useQuery({
+    queryKey: ['vehicle-km-records', page, pageSize],
+    queryFn: () => getVehicleKmRecords(page, pageSize),
+  });
+  const selectedVehicleId = Number(formData.vehicleId);
+  const lastKmRecordQuery = useQuery({
+    enabled: selectedVehicleId > 0,
+    queryKey: ['vehicle-km-records', 'last', selectedVehicleId],
+    queryFn: () => getVehicleKmRecords(1, 1, selectedVehicleId),
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: (input: CreateVehicleKmRecordInput) => {
+      if (editingRecord) {
+        return updateVehicleKmRecord(editingRecord.id, input);
+      }
+
+      return createVehicleKmRecord(input);
+    },
+    onSuccess: () => {
+      setEditingRecord(null);
+      setFormData(emptyFormState);
+      queryClient.invalidateQueries({ queryKey: ['vehicle-km-records'] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteVehicleKmRecord,
+    onMutate: (id) => {
+      setDeletingRecordId(id);
+    },
+    onSettled: () => {
+      setDeletingRecordId(null);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vehicle-km-records'] });
+    },
+  });
+
+  const vehicles = vehiclesQuery.data?.data ?? [];
+  const records = recordsQuery.data?.data ?? [];
+  const meta = recordsQuery.data?.meta ?? {
+    page,
+    limit: pageSize,
+    total: 0,
+    totalPages: 1,
+  };
+  const lastArrivalOdometer =
+    lastKmRecordQuery.data?.data[0]?.arrivalOdometer;
+
+  function updateField<K extends keyof VehicleKmRecordFormState>(
+    key: K,
+    value: VehicleKmRecordFormState[K],
+  ) {
+    setFormData((current) => ({
+      ...current,
+      [key]: value,
+    }));
+  }
+
+  function startEdit(record: VehicleKmRecord) {
+    setEditingRecord(record);
+    setFormData(getFormState(record));
+  }
+
+  function cancelEdit() {
+    setEditingRecord(null);
+    setFormData(emptyFormState);
+  }
+
+  return (
+    <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6">
+        <header className="flex flex-col gap-2">
+          <p className="text-sm font-medium uppercase tracking-wide text-slate-500">
+            UtilityTrack
+          </p>
+          <h1 className="text-2xl font-semibold text-slate-950">
+            Nhập KM xe
+          </h1>
+          <p className="max-w-2xl text-sm text-slate-600">
+            Nhập thông tin xe ra vào theo sổ KM xe của bảo vệ.
+          </p>
+        </header>
+
+        <VehicleKmRecordForm
+          editingRecord={editingRecord}
+          formData={formData}
+          isSubmitting={saveMutation.isPending}
+          lastArrivalOdometer={lastArrivalOdometer}
+          vehicles={vehicles}
+          onCancelEdit={cancelEdit}
+          onSubmit={(input) => saveMutation.mutate(input)}
+          onUpdateField={updateField}
+        />
+
+        {saveMutation.error && (
+          <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {saveMutation.error.message}
+          </p>
+        )}
+
+        {deleteMutation.error && (
+          <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {deleteMutation.error.message}
+          </p>
+        )}
+
+        {vehiclesQuery.error && (
+          <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {vehiclesQuery.error.message}
+          </p>
+        )}
+
+        {recordsQuery.isLoading ? (
+          <p className="rounded-md border border-slate-200 bg-white px-4 py-8 text-center text-sm text-slate-500 shadow-sm">
+            Đang tải dữ liệu KM xe...
+          </p>
+        ) : recordsQuery.error ? (
+          <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {recordsQuery.error.message}
+          </p>
+        ) : (
+          <VehicleKmRecordsTable
+            deletingRecordId={deletingRecordId}
+            records={records}
+            onDelete={(id) => deleteMutation.mutate(id)}
+            onEdit={startEdit}
+          />
+        )}
+
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm">
+          <span className="text-slate-500">
+            Trang {meta.page} / {meta.totalPages || 1}
+          </span>
+          <div className="flex gap-2">
+            <button
+              className="rounded-md border border-slate-300 px-3 py-1.5 font-medium text-slate-700 disabled:cursor-not-allowed disabled:text-slate-300"
+              disabled={meta.page <= 1}
+              type="button"
+              onClick={() => setPage((current) => Math.max(current - 1, 1))}
+            >
+              Trước
+            </button>
+            <button
+              className="rounded-md border border-slate-300 px-3 py-1.5 font-medium text-slate-700 disabled:cursor-not-allowed disabled:text-slate-300"
+              disabled={meta.page >= meta.totalPages}
+              type="button"
+              onClick={() => setPage((current) => current + 1)}
+            >
+              Sau
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

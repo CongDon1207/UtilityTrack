@@ -3,6 +3,7 @@ import {
   ElectricityRecordsPage,
   ElectricityReportPage,
 } from './features/electricity';
+import { VehicleKmRecordsPage, VehiclesPage } from './features/vehicles';
 
 function App() {
   return (
@@ -16,6 +17,8 @@ function App() {
         path="/electricity-records/report"
         element={<ElectricityReportPage />}
       />
+      <Route path="/vehicles" element={<VehiclesPage />} />
+      <Route path="/vehicles/km-records" element={<VehicleKmRecordsPage />} />
     </Routes>
   );
 }

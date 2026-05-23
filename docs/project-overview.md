@@ -2,194 +2,273 @@
 
 ## Purpose
 
-UtilityTrack is a utility management system for tracking operational utility usage and cost. The current implementation starts with electricity records first.
+UtilityTrack is an internal utility tracking system for operational records that are currently managed from spreadsheets. The project is being built in small modules so each department can enter the data it owns and the administrative team can review usage and cost.
 
-The electricity module stores monthly electricity usage and cost by fixed location option and department group.
+The current implemented scope covers:
 
-## Current Repository Structure
+- Electricity usage and cost records.
+- Vehicle master data.
+- Vehicle kilometer trip records.
+- Fuel purchase records.
+
+## Source Workbooks
+
+The current schema and screens are based on the sample files stored under:
+
+```txt
+docs/Sample_data/
+```
+
+Relevant source files include:
+
+- Electricity usage workbook.
+- `KM_xe.xlsx` for vehicle kilometer records.
+- Fuel purchase workbook for fuel records.
+
+## Repository Structure
 
 ```txt
 UtilityTrack/
   README.md
+  package.json
+  backend/
+    src/
+      app.module.ts
+      common/
+        dto/
+          pagination-query.dto.ts
+      dashboard/
+      electricity/
+      vehicles/
+  frontend/
+    src/
+      App.tsx
+      shared/
+        api/
+          http.ts
+      features/
+        electricity/
+        vehicles/
   docs/
     project-overview.md
     schema/
       electricity-records.md
       electricity-records.oracle.sql
+      vehicle-records.md
+      vehicle-records.oracle.sql
     Sample_data/
-      BẢNG CHI TIẾT SỬ DỤNG ĐIỆN CỦA CÁC BỘ PHẬN 2024.xlsx
-      KM_xe.xlsx
-      ĐỔ DẦU.xlsx
-  backend/
-    src/
-      app.module.ts
-      app.service.ts
-      main.ts
-      common/
-        dto/
-          pagination-query.dto.ts
-      electricity/
-        dto/
-          create-electricity-record.dto.ts
-          update-electricity-record.dto.ts
-        electricity-record.entity.ts
-        electricity.controller.ts
-        electricity.module.ts
-        electricity.service.ts
-  frontend/
-    src/
-      App.tsx
-      main.tsx
 ```
 
-## Current Backend Stack
+## Technology Stack
+
+### Backend
 
 - Runtime: Node.js
 - Framework: NestJS
 - Language: TypeScript
-- Package manager: pnpm
-- Validation: class-validator and class-transformer
 - Database: Oracle
 - ORM: TypeORM
+- Validation: `class-validator` and `class-transformer`
+- Excel export support: `exceljs`
 
-## Current Backend Behavior
+### Frontend
 
-The backend currently contains one domain feature module: `electricity`.
+- Framework: React
+- Language: TypeScript
+- Build tool: Vite
+- Routing: React Router
+- Server state: TanStack Query
+- Styling: Tailwind CSS
+- Charts: Recharts
 
-The `ElectricityModule` is imported into the root `AppModule`, so the routes declared in `ElectricityController` are active.
+### Workspace Scripts
 
-## Current Electricity Module
+The root package provides combined backend and frontend scripts:
 
-### Files
+```txt
+npm run dev
+npm run public
+npm run build
+npm run lint
+npm run test:backend
+```
+
+## Backend Architecture
+
+The backend is organized by feature modules. The root `AppModule` loads configuration from environment variables, connects to Oracle through TypeORM, and registers the active feature modules.
+
+Active modules:
+
+- `ElectricityModule`
+- `VehiclesModule`
+- `DashboardModule`
+
+The Oracle connection uses these environment variables:
+
+- `DB_HOST`
+- `DB_PORT`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `DB_SERVICE_NAME`
+
+## Electricity Module
+
+The electricity module manages monthly electricity records and reporting.
+
+### Backend Files
 
 ```txt
 backend/src/electricity/
   dto/
     create-electricity-record.dto.ts
+    electricity-report-query.dto.ts
     update-electricity-record.dto.ts
   electricity-record.entity.ts
   electricity.controller.ts
+  electricity-export.service.ts
+  electricity-report.service.ts
   electricity.module.ts
   electricity.service.ts
+  types/
+    electricity-report.ts
 ```
 
-### Responsibilities
-
-`electricity-record.entity.ts`
-
-Maps the Oracle `ELECTRICITY_RECORDS` table to TypeORM.
-
-`create-electricity-record.dto.ts`
-
-Defines and validates the request body for creating an electricity record.
-
-`update-electricity-record.dto.ts`
-
-Defines the optional request body for updating an electricity record.
-
-`electricity.service.ts`
-
-Contains electricity record business logic and database operations.
-
-`electricity.controller.ts`
-
-Defines HTTP endpoints under:
+### API Endpoints
 
 ```txt
-/electricity-records
-```
-
-`electricity.module.ts`
-
-Registers the electricity entity, controller, and service.
-
-## Current API Endpoints
-
-### Get electricity records
-
-```txt
-GET /electricity-records
-GET /electricity-records?page=1&limit=10
-```
-
-Returns paginated electricity records.
-
-### Get one electricity record by id
-
-```txt
-GET /electricity-records/:id
-```
-
-Returns a single electricity record when found.
-
-If the id does not exist, the service throws a NestJS `NotFoundException`, which produces a `404 Not Found` response.
-
-### Create an electricity record
-
-```txt
-POST /electricity-records
-```
-
-Expected JSON body:
-
-```json
-{
-  "recordYear": 2025,
-  "recordMonth": 1,
-  "location": "MAY_MAY_DIEN_TU_VAN_PHONG_NHA_BEP_KHO",
-  "departmentGroup": "MAY",
-  "kwhUsed": 22109,
-  "totalCost": 54350205,
-  "note": "Imported from electricity workbook"
-}
-```
-
-Supported `location` values:
-
-```txt
-MAY_MAY_DIEN_TU_VAN_PHONG_NHA_BEP_KHO
-CAT_CHUAN_BI_UV_TECH_CU
-LASTING
-PHONG_TECH_MOI
-```
-
-### Update an electricity record
-
-```txt
-PATCH /electricity-records/:id
-```
-
-### Delete an electricity record
-
-```txt
+GET    /electricity-records
+GET    /electricity-records/report
+GET    /electricity-records/export
+GET    /electricity-records/:id
+POST   /electricity-records
+PATCH  /electricity-records/:id
 DELETE /electricity-records/:id
 ```
 
-The current implementation deletes electricity records directly because the schema does not include a soft-delete column.
+### Frontend Pages
 
-## Current Frontend Behavior
+```txt
+/electricity-records
+/electricity-records/report
+```
 
-The frontend is being reset around electricity records. The root route redirects to:
+The electricity records page supports CRUD workflows. The report page supports reporting views and export through the backend export endpoint.
+
+## Vehicle Module
+
+The vehicle module manages vehicle names, kilometer records entered by security staff, and fuel records entered by general affairs.
+
+### Backend Files
+
+```txt
+backend/src/vehicles/
+  dto/
+    create-fuel-record.dto.ts
+    create-vehicle.dto.ts
+    create-vehicle-km-record.dto.ts
+    update-fuel-record.dto.ts
+    update-vehicle.dto.ts
+    update-vehicle-km-record.dto.ts
+    vehicle-km-records-query.dto.ts
+  fuel-record.entity.ts
+  vehicle.entity.ts
+  vehicle-km-record.entity.ts
+  vehicles.controller.ts
+  vehicles.module.ts
+  vehicles.service.ts
+```
+
+### API Endpoints
+
+Vehicle master data:
+
+```txt
+GET    /vehicles
+GET    /vehicles/:id
+POST   /vehicles
+PATCH  /vehicles/:id
+DELETE /vehicles/:id
+```
+
+Vehicle kilometer records:
+
+```txt
+GET    /vehicles/km-records
+GET    /vehicles/km-records/:id
+POST   /vehicles/km-records
+PATCH  /vehicles/km-records/:id
+DELETE /vehicles/km-records/:id
+```
+
+Fuel records:
+
+```txt
+GET    /vehicles/fuel-records
+GET    /vehicles/fuel-records/:id
+POST   /vehicles/fuel-records
+PATCH  /vehicles/fuel-records/:id
+DELETE /vehicles/fuel-records/:id
+```
+
+### Frontend Pages
+
+```txt
+/vehicles
+/vehicles/km-records
+/vehicles/fuel-records
+```
+
+The current vehicle frontend supports:
+
+- Managing vehicle names.
+- Entering and editing kilometer trip records.
+- Selecting a driver from default suggestions while still allowing manual driver entry.
+- Reusing the latest arrival odometer as the next departure odometer.
+- Entering and editing fuel purchase records.
+- Calculating fuel total amount in the UI from unit price and liters.
+
+## Database Schema
+
+The documented tables are:
+
+- `ELECTRICITY_RECORDS`
+- `VEHICLES`
+- `VEHICLE_KM_RECORDS`
+- `FUEL_RECORDS`
+
+Detailed schema notes and Oracle SQL drafts are stored in:
+
+```txt
+docs/schema/
+```
+
+Important design decisions:
+
+- Vehicle names are stored in `VEHICLES`.
+- `VEHICLE_KM_RECORDS` and `FUEL_RECORDS` are separate because they are entered by different teams.
+- `distance_km` is not stored because it can be calculated from odometer readings.
+- `total_amount` is not stored because it can be calculated from unit price and liters.
+- Report-level metrics should be calculated by queries, services, or frontend views instead of duplicated in source tables.
+
+## Current Navigation State
+
+The root frontend route redirects to:
 
 ```txt
 /electricity-records
 ```
 
-The current page is a placeholder for the future electricity records management screen.
+The vehicle pages are available by direct routes. A shared navigation menu has not been added yet.
 
-## Schema Notes
+## Verification Status
 
-The current electricity schema is documented in:
+The recent backend and frontend changes were checked with targeted build and lint commands. The frontend build may require permission to write TypeScript cache files under `frontend/node_modules/.tmp` on this Windows machine.
+
+Known checks used during implementation:
 
 ```txt
-docs/schema/electricity-records.md
+npm.cmd run build --prefix backend
+npm.cmd run lint --prefix backend
+npm.cmd run build --prefix frontend
+npm.cmd run lint --prefix frontend
 ```
-
-The table intentionally does not store derived values such as previous-month difference. Those values should be calculated in reporting queries or API responses.
-
-## Recommended Next Steps
-
-1. Build the frontend electricity records page.
-2. Add frontend API helpers and types for electricity records.
-3. Add create, list, update, and delete UI flows.
-4. Add focused API tests after the CRUD surface stabilizes.

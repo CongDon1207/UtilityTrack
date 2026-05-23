@@ -2,59 +2,44 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Navbar } from '../../../shared/components/Navbar';
 import {
-  createVehicleKmRecord,
-  deleteVehicleKmRecord,
-  getVehicleKmRecords,
+  createFuelRecord,
+  deleteFuelRecord,
+  getFuelRecords,
   getVehicles,
-  updateVehicleKmRecord,
+  updateFuelRecord,
 } from '../api/vehicles';
 import {
-  VehicleKmRecordForm,
-  type VehicleKmRecordFormState,
-} from '../components/VehicleKmRecordForm';
-import { VehicleKmRecordsTable } from '../components/VehicleKmRecordsTable';
-import type {
-  CreateVehicleKmRecordInput,
-  VehicleKmRecord,
-} from '../types/vehicle';
+  FuelRecordForm,
+  type FuelRecordFormState,
+} from '../components/FuelRecordForm';
+import { FuelRecordsTable } from '../components/FuelRecordsTable';
+import type { CreateFuelRecordInput, FuelRecord } from '../types/vehicle';
 
 const pageSize = 10;
 
-const emptyFormState: VehicleKmRecordFormState = {
+const emptyFormState: FuelRecordFormState = {
   vehicleId: '',
-  tripDate: new Date().toISOString().slice(0, 10),
-  driverName: '',
-  tripPurpose: '',
-  departureTime: '',
-  departureOdometer: '',
-  arrivalTime: '',
-  arrivalOdometer: '',
+  fuelDate: new Date().toISOString().slice(0, 10),
+  unitPrice: '',
+  liters: '',
   note: '',
 };
 
-function getFormState(record: VehicleKmRecord): VehicleKmRecordFormState {
+function getFormState(record: FuelRecord): FuelRecordFormState {
   return {
     vehicleId: String(record.vehicleId),
-    tripDate: record.tripDate.slice(0, 10),
-    driverName: record.driverName ?? '',
-    tripPurpose: record.tripPurpose ?? '',
-    departureTime: record.departureTime ?? '',
-    departureOdometer: String(record.departureOdometer),
-    arrivalTime: record.arrivalTime ?? '',
-    arrivalOdometer: String(record.arrivalOdometer),
+    fuelDate: record.fuelDate.slice(0, 10),
+    unitPrice: String(record.unitPrice),
+    liters: String(record.liters),
     note: record.note ?? '',
   };
 }
 
-export function VehicleKmRecordsPage() {
+export function FuelRecordsPage() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
-  const [editingRecord, setEditingRecord] = useState<VehicleKmRecord | null>(
-    null,
-  );
-  const [formData, setFormData] = useState<VehicleKmRecordFormState>(
-    emptyFormState,
-  );
+  const [editingRecord, setEditingRecord] = useState<FuelRecord | null>(null);
+  const [formData, setFormData] = useState<FuelRecordFormState>(emptyFormState);
   const [deletingRecordId, setDeletingRecordId] = useState<number | null>(null);
 
   // States bộ lọc
@@ -68,9 +53,9 @@ export function VehicleKmRecordsPage() {
   });
 
   const recordsQuery = useQuery({
-    queryKey: ['vehicle-km-records', page, pageSize, filterVehicleId, filterYear, filterMonth],
+    queryKey: ['fuel-records', page, pageSize, filterVehicleId, filterYear, filterMonth],
     queryFn: () =>
-      getVehicleKmRecords(
+      getFuelRecords(
         page,
         pageSize,
         filterVehicleId === '' ? undefined : filterVehicleId,
@@ -79,30 +64,23 @@ export function VehicleKmRecordsPage() {
       ),
   });
 
-  const selectedVehicleId = Number(formData.vehicleId);
-  const lastKmRecordQuery = useQuery({
-    enabled: selectedVehicleId > 0,
-    queryKey: ['vehicle-km-records', 'last', selectedVehicleId],
-    queryFn: () => getVehicleKmRecords(1, 1, selectedVehicleId),
-  });
-
   const saveMutation = useMutation({
-    mutationFn: (input: CreateVehicleKmRecordInput) => {
+    mutationFn: (input: CreateFuelRecordInput) => {
       if (editingRecord) {
-        return updateVehicleKmRecord(editingRecord.id, input);
+        return updateFuelRecord(editingRecord.id, input);
       }
 
-      return createVehicleKmRecord(input);
+      return createFuelRecord(input);
     },
     onSuccess: () => {
       setEditingRecord(null);
       setFormData(emptyFormState);
-      queryClient.invalidateQueries({ queryKey: ['vehicle-km-records'] });
+      queryClient.invalidateQueries({ queryKey: ['fuel-records'] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteVehicleKmRecord,
+    mutationFn: deleteFuelRecord,
     onMutate: (id) => {
       setDeletingRecordId(id);
     },
@@ -110,7 +88,7 @@ export function VehicleKmRecordsPage() {
       setDeletingRecordId(null);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['vehicle-km-records'] });
+      queryClient.invalidateQueries({ queryKey: ['fuel-records'] });
     },
   });
 
@@ -125,14 +103,14 @@ export function VehicleKmRecordsPage() {
 
   const summary = recordsQuery.data?.summary ?? {
     totalRecords: 0,
-    totalKm: 0,
+    totalLiters: 0,
+    totalCost: 0,
+    avgUnitPrice: 0,
   };
-  const lastArrivalOdometer =
-    lastKmRecordQuery.data?.data[0]?.arrivalOdometer;
 
-  function updateField<K extends keyof VehicleKmRecordFormState>(
+  function updateField<K extends keyof FuelRecordFormState>(
     key: K,
-    value: VehicleKmRecordFormState[K],
+    value: FuelRecordFormState[K],
   ) {
     setFormData((current) => ({
       ...current,
@@ -140,7 +118,7 @@ export function VehicleKmRecordsPage() {
     }));
   }
 
-  function startEdit(record: VehicleKmRecord) {
+  function startEdit(record: FuelRecord) {
     setEditingRecord(record);
     setFormData(getFormState(record));
   }
@@ -159,18 +137,17 @@ export function VehicleKmRecordsPage() {
             UtilityTrack
           </p>
           <h1 className="text-2xl font-semibold text-slate-950">
-            Nhập KM xe
+            Nhập đổ dầu
           </h1>
           <p className="max-w-2xl text-sm text-slate-600">
-            Nhập thông tin xe ra vào theo sổ KM xe của bảo vệ.
+            Nhập dữ liệu đổ dầu theo xe, đơn giá và số lít.
           </p>
         </header>
 
-        <VehicleKmRecordForm
+        <FuelRecordForm
           editingRecord={editingRecord}
           formData={formData}
           isSubmitting={saveMutation.isPending}
-          lastArrivalOdometer={lastArrivalOdometer}
           vehicles={vehicles}
           onCancelEdit={cancelEdit}
           onSubmit={(input) => saveMutation.mutate(input)}
@@ -257,28 +234,36 @@ export function VehicleKmRecordsPage() {
 
         {/* Panel chỉ số tổng hợp */}
         {recordsQuery.data && (
-          <section className="grid gap-3 sm:grid-cols-2">
+          <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase text-slate-500">Tổng số chuyến đi</p>
+              <p className="text-xs font-semibold uppercase text-slate-500">Tổng số hóa đơn</p>
               <p className="mt-1 text-lg font-bold text-slate-950">{summary.totalRecords}</p>
             </div>
             <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase text-slate-500">Tổng quãng đường</p>
-              <p className="mt-1 text-lg font-bold text-slate-950">{new Intl.NumberFormat('vi-VN').format(summary.totalKm)} km</p>
+              <p className="text-xs font-semibold uppercase text-slate-500">Tổng số lít</p>
+              <p className="mt-1 text-lg font-bold text-slate-950">{new Intl.NumberFormat('vi-VN').format(summary.totalLiters)} lít</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase text-slate-500">Tổng chi phí</p>
+              <p className="mt-1 text-lg font-bold text-slate-950">{new Intl.NumberFormat('vi-VN').format(summary.totalCost)} đ</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase text-slate-500">Đơn giá trung bình / Lít</p>
+              <p className="mt-1 text-lg font-bold text-slate-950">{new Intl.NumberFormat('vi-VN').format(summary.avgUnitPrice)} đ</p>
             </div>
           </section>
         )}
 
         {recordsQuery.isLoading ? (
           <p className="rounded-md border border-slate-200 bg-white px-4 py-8 text-center text-sm text-slate-500 shadow-sm">
-            Đang tải dữ liệu KM xe...
+            Đang tải dữ liệu đổ dầu...
           </p>
         ) : recordsQuery.error ? (
           <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {recordsQuery.error.message}
           </p>
         ) : (
-          <VehicleKmRecordsTable
+          <FuelRecordsTable
             deletingRecordId={deletingRecordId}
             records={records}
             onDelete={(id) => deleteMutation.mutate(id)}

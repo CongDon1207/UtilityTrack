@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { Navbar } from '../../../shared/components/Navbar';
 import { getElectricityExportUrl } from '../api/electricityExport';
 import { getElectricityReport } from '../api/electricityReport';
 import { ElectricityReportDashboard } from '../components/ElectricityReportDashboard';
@@ -26,8 +27,10 @@ export function ElectricityReportPage() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6">
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <Navbar />
+
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
         <header className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-medium uppercase tracking-wide text-slate-500">

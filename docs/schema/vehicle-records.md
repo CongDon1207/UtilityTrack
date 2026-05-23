@@ -75,7 +75,7 @@ FUEL_RECORDS
 | `id` | Primary key | Auto-generated numeric identifier. |
 | `vehicle_id` | Vehicle reference | References `VEHICLES.id`. |
 | `fuel_date` | Fuel purchase date | Comes from the date column in the fuel workbook. |
-| `unit_price` | Fuel unit price | Comes from the price column in the fuel workbook. |
+| `unit_price` | Fuel unit price | Integer VND amount from the price column in the fuel workbook. |
 | `liters` | Fuel volume | Comes from the liters column in the fuel workbook. |
 | `note` | Optional note | Used for invoice notes or manual clarification. |
 | `created_at` | Creation timestamp | Set when the record is created. |
@@ -99,4 +99,5 @@ FUEL_RECORDS
 - `departure_odometer` and `arrival_odometer` should be required integer values and greater than or equal to `0`.
 - `arrival_odometer` should be greater than or equal to `departure_odometer`.
 - `fuel_date` should be required for fuel records.
-- `unit_price` and `liters` should be required and greater than or equal to `0`.
+- `unit_price` should be a required integer value and greater than or equal to `0`.
+- `liters` should be required and greater than or equal to `0`.

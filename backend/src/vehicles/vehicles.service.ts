@@ -4,13 +4,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, FindOptionsWhere, Repository } from 'typeorm';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { CreateFuelRecordDto } from './dto/create-fuel-record.dto';
 import { CreateVehicleKmRecordDto } from './dto/create-vehicle-km-record.dto';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
+import { FuelRecordsQueryDto } from './dto/fuel-records-query.dto';
+import { UpdateFuelRecordDto } from './dto/update-fuel-record.dto';
 import { UpdateVehicleKmRecordDto } from './dto/update-vehicle-km-record.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { VehicleKmRecordsQueryDto } from './dto/vehicle-km-records-query.dto';
+import { FuelRecordEntity } from './fuel-record.entity';
 import { VehicleKmRecordEntity } from './vehicle-km-record.entity';
 import { VehicleEntity } from './vehicle.entity';
 
@@ -21,6 +25,8 @@ export class VehiclesService {
     private readonly vehiclesRepository: Repository<VehicleEntity>,
     @InjectRepository(VehicleKmRecordEntity)
     private readonly vehicleKmRecordsRepository: Repository<VehicleKmRecordEntity>,
+    @InjectRepository(FuelRecordEntity)
+    private readonly fuelRecordsRepository: Repository<FuelRecordEntity>,
   ) {}
 
   async findAll(query: PaginationQueryDto) {
@@ -91,12 +97,26 @@ export class VehiclesService {
     const pageSize = query.limit;
     const skip = (currentPage - 1) * pageSize;
 
+    const whereClause: FindOptionsWhere<VehicleKmRecordEntity> = {};
+    if (query.vehicleId) {
+      whereClause.vehicleId = query.vehicleId;
+    }
+    if (query.year) {
+      const start = new Date(
+        Date.UTC(query.year, query.month ? query.month - 1 : 0, 1, 0, 0, 0, 0),
+      );
+      const end = query.month
+        ? new Date(Date.UTC(query.year, query.month, 0, 23, 59, 59, 999))
+        : new Date(Date.UTC(query.year, 11, 31, 23, 59, 59, 999));
+      whereClause.tripDate = Between(start, end);
+    }
+
     const [records, total] = await this.vehicleKmRecordsRepository.findAndCount(
       {
         relations: {
           vehicle: true,
         },
-        where: query.vehicleId ? { vehicleId: query.vehicleId } : {},
+        where: whereClause,
         order: {
           tripDate: 'DESC',
           id: 'DESC',
@@ -106,6 +126,18 @@ export class VehiclesService {
       },
     );
 
+    // Tính toán summary cho tất cả bản ghi thỏa mãn bộ lọc
+    const allMatchingRecords = await this.vehicleKmRecordsRepository.find({
+      where: whereClause,
+    });
+
+    const totalKm = allMatchingRecords.reduce(
+      (sum, r) =>
+        sum +
+        (Number(r.arrivalOdometer || 0) - Number(r.departureOdometer || 0)),
+      0,
+    );
+
     return {
       data: records,
       meta: {
@@ -113,6 +145,10 @@ export class VehiclesService {
         limit: pageSize,
         total,
         totalPages: Math.ceil(total / pageSize),
+      },
+      summary: {
+        totalRecords: total,
+        totalKm,
       },
     };
   }
@@ -171,6 +207,123 @@ export class VehiclesService {
 
     if (!result.affected) {
       throw new NotFoundException(`Vehicle KM record with id ${id} not found`);
+    }
+
+    return { deleted: true };
+  }
+
+  async findAllFuelRecords(query: FuelRecordsQueryDto) {
+    const currentPage = query.page;
+    const pageSize = query.limit;
+    const skip = (currentPage - 1) * pageSize;
+
+    const whereClause: FindOptionsWhere<FuelRecordEntity> = {};
+    if (query.vehicleId) {
+      whereClause.vehicleId = query.vehicleId;
+    }
+    if (query.year) {
+      const start = new Date(
+        Date.UTC(query.year, query.month ? query.month - 1 : 0, 1, 0, 0, 0, 0),
+      );
+      const end = query.month
+        ? new Date(Date.UTC(query.year, query.month, 0, 23, 59, 59, 999))
+        : new Date(Date.UTC(query.year, 11, 31, 23, 59, 59, 999));
+      whereClause.fuelDate = Between(start, end);
+    }
+
+    const [records, total] = await this.fuelRecordsRepository.findAndCount({
+      relations: {
+        vehicle: true,
+      },
+      where: whereClause,
+      order: {
+        fuelDate: 'DESC',
+        id: 'DESC',
+      },
+      skip,
+      take: pageSize,
+    });
+
+    // Tính toán summary cho tất cả bản ghi thỏa mãn bộ lọc
+    const allMatchingRecords = await this.fuelRecordsRepository.find({
+      where: whereClause,
+    });
+
+    const totalLiters = allMatchingRecords.reduce(
+      (sum, r) => sum + Number(r.liters || 0),
+      0,
+    );
+    const totalCost = allMatchingRecords.reduce(
+      (sum, r) => sum + Number(r.unitPrice || 0) * Number(r.liters || 0),
+      0,
+    );
+    const avgUnitPrice = totalLiters > 0 ? totalCost / totalLiters : 0;
+
+    return {
+      data: records,
+      meta: {
+        page: currentPage,
+        limit: pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+      summary: {
+        totalRecords: total,
+        totalLiters,
+        totalCost,
+        avgUnitPrice,
+      },
+    };
+  }
+
+  async findOneFuelRecord(id: string) {
+    const record = await this.fuelRecordsRepository.findOne({
+      relations: {
+        vehicle: true,
+      },
+      where: { id: Number(id) },
+    });
+
+    if (!record) {
+      throw new NotFoundException(`Fuel record with id ${id} not found`);
+    }
+
+    return record;
+  }
+
+  async createFuelRecord(data: CreateFuelRecordDto) {
+    await this.findOne(String(data.vehicleId));
+
+    const newRecord = this.fuelRecordsRepository.create({
+      ...data,
+      fuelDate: new Date(data.fuelDate),
+    });
+
+    return this.fuelRecordsRepository.save(newRecord);
+  }
+
+  async updateFuelRecord(id: string, data: UpdateFuelRecordDto) {
+    const record = await this.findOneFuelRecord(id);
+
+    if (data.vehicleId) {
+      await this.findOne(String(data.vehicleId));
+    }
+
+    Object.assign(record, {
+      ...data,
+      ...(data.fuelDate ? { fuelDate: new Date(data.fuelDate) } : {}),
+    });
+
+    return this.fuelRecordsRepository.save(record);
+  }
+
+  async removeFuelRecord(id: string) {
+    const result = await this.fuelRecordsRepository.delete({
+      id: Number(id),
+    });
+
+    if (!result.affected) {
+      throw new NotFoundException(`Fuel record with id ${id} not found`);
     }
 
     return { deleted: true };

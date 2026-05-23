@@ -9,8 +9,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { CreateFuelRecordDto } from './dto/create-fuel-record.dto';
 import { CreateVehicleKmRecordDto } from './dto/create-vehicle-km-record.dto';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
+import { FuelRecordsQueryDto } from './dto/fuel-records-query.dto';
+import { UpdateFuelRecordDto } from './dto/update-fuel-record.dto';
 import { UpdateVehicleKmRecordDto } from './dto/update-vehicle-km-record.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { VehicleKmRecordsQueryDto } from './dto/vehicle-km-records-query.dto';
@@ -51,6 +54,31 @@ export class VehiclesController {
   @Delete('km-records/:id')
   removeKmRecord(@Param('id') id: string) {
     return this.vehiclesService.removeKmRecord(id);
+  }
+
+  @Get('fuel-records')
+  findAllFuelRecords(@Query() query: FuelRecordsQueryDto) {
+    return this.vehiclesService.findAllFuelRecords(query);
+  }
+
+  @Get('fuel-records/:id')
+  findOneFuelRecord(@Param('id') id: string) {
+    return this.vehiclesService.findOneFuelRecord(id);
+  }
+
+  @Post('fuel-records')
+  createFuelRecord(@Body() body: CreateFuelRecordDto) {
+    return this.vehiclesService.createFuelRecord(body);
+  }
+
+  @Patch('fuel-records/:id')
+  updateFuelRecord(@Param('id') id: string, @Body() body: UpdateFuelRecordDto) {
+    return this.vehiclesService.updateFuelRecord(id, body);
+  }
+
+  @Delete('fuel-records/:id')
+  removeFuelRecord(@Param('id') id: string) {
+    return this.vehiclesService.removeFuelRecord(id);
   }
 
   @Get(':id')

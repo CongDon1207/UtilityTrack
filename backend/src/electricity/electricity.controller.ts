@@ -42,9 +42,8 @@ export class ElectricityController {
     @Query() query: ElectricityReportQueryDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const exportedReport = await this.electricityExportService.exportReport(
-      query,
-    );
+    const exportedReport =
+      await this.electricityExportService.exportReport(query);
 
     response.set({
       'Content-Type':

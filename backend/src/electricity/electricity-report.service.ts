@@ -33,8 +33,7 @@ export class ElectricityReportService {
     const groupsByDepartment = new Map<string, ElectricityRecordEntity[]>();
 
     for (const record of records) {
-      const groupRecords =
-        groupsByDepartment.get(record.departmentGroup) ?? [];
+      const groupRecords = groupsByDepartment.get(record.departmentGroup) ?? [];
 
       groupRecords.push(record);
       groupsByDepartment.set(record.departmentGroup, groupRecords);

@@ -61,4 +61,46 @@ export type VehicleKmRecordsResponse = {
     total: number;
     totalPages: number;
   };
+  summary: {
+    totalRecords: number;
+    totalKm: number;
+  };
+};
+
+export type FuelRecord = {
+  id: number;
+  vehicleId: number;
+  vehicle: Vehicle;
+  fuelDate: string;
+  unitPrice: number;
+  liters: number;
+  note?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateFuelRecordInput = {
+  vehicleId: number;
+  fuelDate: string;
+  unitPrice: number;
+  liters: number;
+  note?: string;
+};
+
+export type UpdateFuelRecordInput = Partial<CreateFuelRecordInput>;
+
+export type FuelRecordsResponse = {
+  data: FuelRecord[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  summary: {
+    totalRecords: number;
+    totalLiters: number;
+    totalCost: number;
+    avgUnitPrice: number;
+  };
 };

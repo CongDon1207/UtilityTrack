@@ -1,7 +1,11 @@
 import { API_BASE_URL, parseJsonResponse } from '../../../shared/api/http';
 import type {
+  CreateFuelRecordInput,
   CreateVehicleInput,
   CreateVehicleKmRecordInput,
+  FuelRecord,
+  FuelRecordsResponse,
+  UpdateFuelRecordInput,
   UpdateVehicleInput,
   UpdateVehicleKmRecordInput,
   Vehicle,
@@ -68,6 +72,8 @@ export async function getVehicleKmRecords(
   page = 1,
   limit = 10,
   vehicleId?: number,
+  year?: number,
+  month?: number,
 ): Promise<VehicleKmRecordsResponse> {
   const params = new URLSearchParams({
     page: String(page),
@@ -76,6 +82,12 @@ export async function getVehicleKmRecords(
 
   if (vehicleId) {
     params.set('vehicleId', String(vehicleId));
+  }
+  if (year) {
+    params.set('year', String(year));
+  }
+  if (month) {
+    params.set('month', String(month));
   }
 
   const response = await fetch(
@@ -133,5 +145,85 @@ export async function deleteVehicleKmRecord(
   return parseJsonResponse<{ deleted: boolean }>(
     response,
     'Could not delete vehicle KM record',
+  );
+}
+
+export async function getFuelRecords(
+  page = 1,
+  limit = 10,
+  vehicleId?: number,
+  year?: number,
+  month?: number,
+): Promise<FuelRecordsResponse> {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+
+  if (vehicleId) {
+    params.set('vehicleId', String(vehicleId));
+  }
+  if (year) {
+    params.set('year', String(year));
+  }
+  if (month) {
+    params.set('month', String(month));
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/vehicles/fuel-records?${params.toString()}`,
+  );
+
+  return parseJsonResponse<FuelRecordsResponse>(
+    response,
+    'Could not load fuel records',
+  );
+}
+
+export async function createFuelRecord(
+  input: CreateFuelRecordInput,
+): Promise<FuelRecord> {
+  const response = await fetch(`${API_BASE_URL}/vehicles/fuel-records`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(input),
+  });
+
+  return parseJsonResponse<FuelRecord>(
+    response,
+    'Could not create fuel record',
+  );
+}
+
+export async function updateFuelRecord(
+  id: number,
+  input: UpdateFuelRecordInput,
+): Promise<FuelRecord> {
+  const response = await fetch(`${API_BASE_URL}/vehicles/fuel-records/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(input),
+  });
+
+  return parseJsonResponse<FuelRecord>(
+    response,
+    'Could not update fuel record',
+  );
+}
+
+export async function deleteFuelRecord(
+  id: number,
+): Promise<{ deleted: boolean }> {
+  const response = await fetch(`${API_BASE_URL}/vehicles/fuel-records/${id}`, {
+    method: 'DELETE',
+  });
+
+  return parseJsonResponse<{ deleted: boolean }>(
+    response,
+    'Could not delete fuel record',
   );
 }

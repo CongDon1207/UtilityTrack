@@ -46,7 +46,7 @@ function getFormState(record: VehicleKmRecord): VehicleKmRecordFormState {
   };
 }
 
-export function VehicleKmRecordsPage() {
+export function VehicleKmRecordsPage({ showNavbar = true }: { showNavbar?: boolean }) {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [editingRecord, setEditingRecord] = useState<VehicleKmRecord | null>(
@@ -64,7 +64,7 @@ export function VehicleKmRecordsPage() {
 
   const vehiclesQuery = useQuery({
     queryKey: ['vehicles', 'all'],
-    queryFn: () => getVehicles(1, 100),
+    queryFn: () => getVehicles(1, 100, 1),
   });
 
   const recordsQuery = useQuery({
@@ -152,7 +152,7 @@ export function VehicleKmRecordsPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <Navbar />
+      {showNavbar && <Navbar />}
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
         <header className="flex flex-col gap-2">
           <p className="text-sm font-medium uppercase tracking-wide text-slate-500">

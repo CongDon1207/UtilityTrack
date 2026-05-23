@@ -17,9 +17,19 @@ import type {
 export async function getVehicles(
   page = 1,
   limit = 10,
+  isActive?: number,
 ): Promise<VehiclesResponse> {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+
+  if (isActive !== undefined) {
+    params.set('isActive', String(isActive));
+  }
+
   const response = await fetch(
-    `${API_BASE_URL}/vehicles?page=${page}&limit=${limit}`,
+    `${API_BASE_URL}/vehicles?${params.toString()}`,
   );
 
   return parseJsonResponse<VehiclesResponse>(

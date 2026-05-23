@@ -35,7 +35,7 @@ export function Navbar() {
             {/* Links điều hướng ngang trên Desktop */}
             <div className="hidden md:flex md:space-x-6 h-16">
               <NavLink
-                to="/dashboard"
+                to="/admin/dashboard"
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
                 Tổng quan
@@ -44,7 +44,7 @@ export function Navbar() {
               <div className="h-4 w-px bg-slate-200 self-center" />
 
               <NavLink
-                to="/electricity-records"
+                to="/admin/electricity-records"
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 end
               >
@@ -56,7 +56,7 @@ export function Navbar() {
               <div className="h-4 w-px bg-slate-200 self-center" />
 
               <NavLink
-                to="/vehicles"
+                to="/admin/vehicles"
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 end
               >
@@ -64,14 +64,14 @@ export function Navbar() {
               </NavLink>
 
               <NavLink
-                to="/vehicles/km-records"
+                to="/admin/vehicles/km-records"
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
                 Nhật ký KM
               </NavLink>
 
               <NavLink
-                to="/vehicles/fuel-records"
+                to="/admin/vehicles/fuel-records"
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
                 Đổ xăng/dầu
@@ -83,7 +83,7 @@ export function Navbar() {
         {/* Links điều hướng cuộn ngang cho thiết bị di động */}
         <div className="flex md:hidden space-x-4 overflow-x-auto pb-3 pt-1 scrollbar-none border-t border-slate-100">
           <NavLink
-            to="/dashboard"
+            to="/admin/dashboard"
             className={({ isActive }) =>
               isActive
                 ? 'whitespace-nowrap rounded-md bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white'
@@ -93,7 +93,7 @@ export function Navbar() {
             Tổng quan
           </NavLink>
           <NavLink
-            to="/electricity-records"
+            to="/admin/electricity-records"
             className={({ isActive }) =>
               isActive
                 ? 'whitespace-nowrap rounded-md bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white'
@@ -105,7 +105,7 @@ export function Navbar() {
           </NavLink>
 
           <NavLink
-            to="/vehicles"
+            to="/admin/vehicles"
             className={({ isActive }) =>
               isActive
                 ? 'whitespace-nowrap rounded-md bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white'
@@ -116,7 +116,7 @@ export function Navbar() {
             Quản lý xe
           </NavLink>
           <NavLink
-            to="/vehicles/km-records"
+            to="/admin/vehicles/km-records"
             className={({ isActive }) =>
               isActive
                 ? 'whitespace-nowrap rounded-md bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white'
@@ -126,7 +126,7 @@ export function Navbar() {
             Nhật ký KM
           </NavLink>
           <NavLink
-            to="/vehicles/fuel-records"
+            to="/admin/vehicles/fuel-records"
             className={({ isActive }) =>
               isActive
                 ? 'whitespace-nowrap rounded-md bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white'

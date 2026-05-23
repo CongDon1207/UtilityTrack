@@ -21,7 +21,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
         password: configService.getOrThrow<string>('DB_PASSWORD'),
         serviceName: configService.getOrThrow<string>('DB_SERVICE_NAME'),
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
       }),
     }),
     ElectricityModule,

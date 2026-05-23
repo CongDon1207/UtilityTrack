@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, FindOptionsWhere, Repository } from 'typeorm';
-import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { CreateFuelRecordDto } from './dto/create-fuel-record.dto';
 import { CreateVehicleKmRecordDto } from './dto/create-vehicle-km-record.dto';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
@@ -13,6 +12,7 @@ import { FuelRecordsQueryDto } from './dto/fuel-records-query.dto';
 import { UpdateFuelRecordDto } from './dto/update-fuel-record.dto';
 import { UpdateVehicleKmRecordDto } from './dto/update-vehicle-km-record.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { VehiclesQueryDto } from './dto/vehicles-query.dto';
 import { VehicleKmRecordsQueryDto } from './dto/vehicle-km-records-query.dto';
 import { FuelRecordEntity } from './fuel-record.entity';
 import { VehicleKmRecordEntity } from './vehicle-km-record.entity';
@@ -29,13 +29,18 @@ export class VehiclesService {
     private readonly fuelRecordsRepository: Repository<FuelRecordEntity>,
   ) {}
 
-  async findAll(query: PaginationQueryDto) {
+  async findAll(query: VehiclesQueryDto) {
     const currentPage = query.page;
     const pageSize = query.limit;
     const skip = (currentPage - 1) * pageSize;
 
+    const whereClause: FindOptionsWhere<VehicleEntity> = {};
+    if (query.isActive !== undefined) {
+      whereClause.isActive = query.isActive;
+    }
+
     const [vehicles, total] = await this.vehiclesRepository.findAndCount({
-      where: { isActive: 1 },
+      where: whereClause,
       order: {
         vehicleName: 'ASC',
         id: 'ASC',
@@ -57,7 +62,7 @@ export class VehiclesService {
 
   async findOne(id: string) {
     const vehicle = await this.vehiclesRepository.findOne({
-      where: { id: Number(id), isActive: 1 },
+      where: { id: Number(id) },
     });
 
     if (!vehicle) {
@@ -69,8 +74,8 @@ export class VehiclesService {
 
   create(data: CreateVehicleDto) {
     const newVehicle = this.vehiclesRepository.create({
-      ...data,
-      isActive: 1,
+      vehicleName: data.vehicleName,
+      isActive: data.isActive !== undefined ? data.isActive : 1,
     });
 
     return this.vehiclesRepository.save(newVehicle);
@@ -169,7 +174,10 @@ export class VehiclesService {
   }
 
   async createKmRecord(data: CreateVehicleKmRecordDto) {
-    await this.findOne(String(data.vehicleId));
+    const vehicle = await this.findOne(String(data.vehicleId));
+    if (vehicle.isActive !== 1) {
+      throw new BadRequestException('Selected vehicle is inactive');
+    }
     this.validateOdometerOrder(data.departureOdometer, data.arrivalOdometer);
 
     const newRecord = this.vehicleKmRecordsRepository.create({
@@ -292,7 +300,10 @@ export class VehiclesService {
   }
 
   async createFuelRecord(data: CreateFuelRecordDto) {
-    await this.findOne(String(data.vehicleId));
+    const vehicle = await this.findOne(String(data.vehicleId));
+    if (vehicle.isActive !== 1) {
+      throw new BadRequestException('Selected vehicle is inactive');
+    }
 
     const newRecord = this.fuelRecordsRepository.create({
       ...data,

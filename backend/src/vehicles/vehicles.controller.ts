@@ -8,7 +8,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { VehiclesQueryDto } from './dto/vehicles-query.dto';
 import { CreateFuelRecordDto } from './dto/create-fuel-record.dto';
 import { CreateVehicleKmRecordDto } from './dto/create-vehicle-km-record.dto';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
@@ -24,7 +24,7 @@ export class VehiclesController {
   constructor(private readonly vehiclesService: VehiclesService) {}
 
   @Get()
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: VehiclesQueryDto) {
     return this.vehiclesService.findAll(query);
   }
 

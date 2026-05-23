@@ -8,6 +8,7 @@ export type Vehicle = {
 
 export type CreateVehicleInput = {
   vehicleName: string;
+  isActive?: number;
 };
 
 export type UpdateVehicleInput = Partial<CreateVehicleInput>;

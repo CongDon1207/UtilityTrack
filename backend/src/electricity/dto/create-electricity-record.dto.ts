@@ -2,7 +2,6 @@ import {
   IsIn,
   IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   Max,
@@ -29,11 +28,11 @@ export class CreateElectricityRecordDto {
   ])
   departmentGroup!: string;
 
-  @IsNumber()
+  @IsInt()
   @Min(0)
   kwhUsed!: number;
 
-  @IsNumber()
+  @IsInt()
   @Min(0)
   totalCost!: number;
 

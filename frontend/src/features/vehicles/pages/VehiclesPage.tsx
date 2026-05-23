@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Navbar } from '../../../shared/components/Navbar';
 import {
   createVehicle,
-  deleteVehicle,
   getVehicles,
   updateVehicle,
 } from '../api/vehicles';
@@ -20,9 +19,8 @@ export function VehiclesPage() {
   const [page, setPage] = useState(1);
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [vehicleName, setVehicleName] = useState('');
-  const [deletingVehicleId, setDeletingVehicleId] = useState<number | null>(
-    null,
-  );
+  const [isActive, setIsActive] = useState<number>(1);
+  const [updatingActiveId, setUpdatingActiveId] = useState<number | null>(null);
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['vehicles', page, pageSize],
@@ -40,17 +38,20 @@ export function VehiclesPage() {
     onSuccess: () => {
       setEditingVehicle(null);
       setVehicleName('');
+      setIsActive(1);
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteVehicle,
-    onMutate: (id) => {
-      setDeletingVehicleId(id);
+  const toggleActiveMutation = useMutation({
+    mutationFn: ({ id, isActiveValue }: { id: number; isActiveValue: number }) => {
+      return updateVehicle(id, { isActive: isActiveValue });
+    },
+    onMutate: ({ id }) => {
+      setUpdatingActiveId(id);
     },
     onSettled: () => {
-      setDeletingVehicleId(null);
+      setUpdatingActiveId(null);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
@@ -68,11 +69,13 @@ export function VehiclesPage() {
   function startEdit(vehicle: Vehicle) {
     setEditingVehicle(vehicle);
     setVehicleName(getInitialVehicleName(vehicle));
+    setIsActive(vehicle.isActive);
   }
 
   function cancelEdit() {
     setEditingVehicle(null);
     setVehicleName('');
+    setIsActive(1);
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -86,6 +89,7 @@ export function VehiclesPage() {
 
     saveMutation.mutate({
       vehicleName: nextVehicleName,
+      isActive,
     });
   }
 
@@ -122,15 +126,15 @@ export function VehiclesPage() {
               {editingVehicle ? 'Sửa xe' : 'Thêm xe'}
             </h2>
             <p className="text-sm text-slate-500">
-              Nhập tên xe ngắn gọn và thống nhất với file dữ liệu mẫu.
+              Nhập tên xe và trạng thái hoạt động của xe.
             </p>
           </div>
 
-          <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-end">
-            <label className="flex flex-1 flex-col gap-1.5 text-sm font-medium text-slate-700">
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
               Tên xe
               <input
-                className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
+                className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900 bg-white"
                 maxLength={100}
                 required
                 value={vehicleName}
@@ -138,30 +142,42 @@ export function VehiclesPage() {
               />
             </label>
 
-            <div className="flex flex-wrap gap-3">
-              <button
-                className="rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-slate-400"
-                disabled={saveMutation.isPending || !vehicleName.trim()}
-                type="submit"
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+              Trạng thái
+              <select
+                className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900 bg-white"
+                value={isActive}
+                onChange={(event) => setIsActive(Number(event.target.value))}
               >
-                {saveMutation.isPending
-                  ? 'Đang lưu...'
-                  : editingVehicle
-                    ? 'Lưu thay đổi'
-                    : 'Thêm xe'}
-              </button>
+                <option value={1}>Đang dùng</option>
+                <option value={0}>Ngừng dùng</option>
+              </select>
+            </label>
+          </div>
 
-              {editingVehicle && (
-                <button
-                  className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
-                  disabled={saveMutation.isPending}
-                  type="button"
-                  onClick={cancelEdit}
-                >
-                  Hủy
-                </button>
-              )}
-            </div>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              className="rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-slate-400"
+              disabled={saveMutation.isPending || !vehicleName.trim()}
+              type="submit"
+            >
+              {saveMutation.isPending
+                ? 'Đang lưu...'
+                : editingVehicle
+                  ? 'Lưu thay đổi'
+                  : 'Thêm xe'}
+            </button>
+
+            {editingVehicle && (
+              <button
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 bg-white hover:bg-slate-50"
+                disabled={saveMutation.isPending}
+                type="button"
+                onClick={cancelEdit}
+              >
+                Hủy
+              </button>
+            )}
           </div>
         </form>
 
@@ -171,9 +187,9 @@ export function VehiclesPage() {
           </p>
         )}
 
-        {deleteMutation.error && (
+        {toggleActiveMutation.error && (
           <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {deleteMutation.error.message}
+            {toggleActiveMutation.error.message}
           </p>
         )}
 
@@ -205,27 +221,58 @@ export function VehiclesPage() {
                         {vehicle.vehicleName}
                       </td>
                       <td className="px-4 py-3 text-slate-600">
-                        {vehicle.isActive === 1 ? 'Đang dùng' : 'Ngừng dùng'}
+                        {vehicle.isActive === 1 ? (
+                          <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                            Đang dùng
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">
+                            Ngừng dùng
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex justify-end gap-2">
                           <button
-                            className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700"
+                            className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50"
                             type="button"
                             onClick={() => startEdit(vehicle)}
                           >
                             Sửa
                           </button>
-                          <button
-                            className="rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 disabled:cursor-not-allowed disabled:text-red-300"
-                            disabled={deletingVehicleId === vehicle.id}
-                            type="button"
-                            onClick={() => deleteMutation.mutate(vehicle.id)}
-                          >
-                            {deletingVehicleId === vehicle.id
-                              ? 'Đang xóa...'
-                              : 'Xóa'}
-                          </button>
+                          {vehicle.isActive === 1 ? (
+                            <button
+                              className="rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 disabled:cursor-not-allowed"
+                              disabled={updatingActiveId === vehicle.id}
+                              type="button"
+                              onClick={() =>
+                                toggleActiveMutation.mutate({
+                                  id: vehicle.id,
+                                  isActiveValue: 0,
+                                })
+                              }
+                            >
+                              {updatingActiveId === vehicle.id
+                                ? 'Đang lưu...'
+                                : 'Ngừng dùng'}
+                            </button>
+                          ) : (
+                            <button
+                              className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 disabled:cursor-not-allowed"
+                              disabled={updatingActiveId === vehicle.id}
+                              type="button"
+                              onClick={() =>
+                                toggleActiveMutation.mutate({
+                                  id: vehicle.id,
+                                  isActiveValue: 1,
+                                })
+                              }
+                            >
+                              {updatingActiveId === vehicle.id
+                                ? 'Đang lưu...'
+                                : 'Kích hoạt'}
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

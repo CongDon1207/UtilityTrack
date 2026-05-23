@@ -20,10 +20,10 @@ export class ElectricityRecordEntity {
   @Column({ name: 'DEPARTMENT_GROUP', type: 'varchar2', length: 150 })
   departmentGroup!: string;
 
-  @Column({ name: 'KWH_USED', type: 'number', precision: 14, scale: 2 })
+  @Column({ name: 'KWH_USED', type: 'number', precision: 14 })
   kwhUsed!: number;
 
-  @Column({ name: 'TOTAL_COST', type: 'number', precision: 18, scale: 2 })
+  @Column({ name: 'TOTAL_COST', type: 'number', precision: 18 })
   totalCost!: number;
 
   @Column({ name: 'NOTE', type: 'varchar2', length: 500, nullable: true })

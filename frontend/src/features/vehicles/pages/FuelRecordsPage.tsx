@@ -49,7 +49,7 @@ export function FuelRecordsPage() {
 
   const vehiclesQuery = useQuery({
     queryKey: ['vehicles', 'all'],
-    queryFn: () => getVehicles(1, 100),
+    queryFn: () => getVehicles(1, 100, 1),
   });
 
   const recordsQuery = useQuery({

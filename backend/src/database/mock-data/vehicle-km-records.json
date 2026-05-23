@@ -1,0 +1,12 @@
+[
+  { "vehicleName": "6T ISUZU", "tripDate": "2025-04-02", "driverName": "Lâm", "tripPurpose": "Đi Bình Dương", "departureTime": "08:00", "departureOdometer": 120000, "arrivalTime": "17:00", "arrivalOdometer": 120150, "note": "" },
+  { "vehicleName": "BÁN TẢI", "tripDate": "2025-04-03", "driverName": "Hoàng", "tripPurpose": "Giao hàng nhanh", "departureTime": "07:30", "departureOdometer": 85000, "arrivalTime": "18:30", "arrivalOdometer": 85120, "note": "" },
+  { "vehicleName": "7C", "tripDate": "2025-04-05", "driverName": "Cường", "tripPurpose": "Chở sếp đi họp", "departureTime": "08:30", "departureOdometer": 45000, "arrivalTime": "16:00", "arrivalOdometer": 45080, "note": "" },
+  { "vehicleName": "19C", "tripDate": "2025-02-27", "driverName": "Lâm", "tripPurpose": "Đi Bình Dương", "departureTime": "08:19", "departureOdometer": 285118, "arrivalTime": "15:10", "arrivalOdometer": 285241, "note": "" },
+  { "vehicleName": "6T HINO", "tripDate": "2025-04-09", "driverName": "Trường", "tripPurpose": "Đi lấy hàng", "departureTime": "09:00", "departureOdometer": 95000, "arrivalTime": "15:00", "arrivalOdometer": 95180, "note": "" },
+  { "vehicleName": "1.9T", "tripDate": "2025-04-11", "driverName": "Hoan", "tripPurpose": "Đi giao hàng HCM", "departureTime": "08:00", "departureOdometer": 62000, "arrivalTime": "12:00", "arrivalOdometer": 62085, "note": "" },
+  { "vehicleName": "3.5T", "tripDate": "2025-04-12", "driverName": "Trí", "tripPurpose": "Chở nguyên vật liệu", "departureTime": "13:00", "departureOdometer": 78000, "arrivalTime": "17:30", "arrivalOdometer": 78110, "note": "" },
+  { "vehicleName": "Hino", "tripDate": "2025-05-03", "driverName": "Cường", "tripPurpose": "Vận chuyển nội bộ", "departureTime": "08:15", "departureOdometer": 102000, "arrivalTime": "11:45", "arrivalOdometer": 102045, "note": "" },
+  { "vehicleName": "19C", "tripDate": "2025-03-13", "driverName": "Hoàng", "tripPurpose": "Đi Long An", "departureTime": "07:31", "departureOdometer": 285383, "arrivalTime": "20:50", "arrivalOdometer": 285597, "note": "" },
+  { "vehicleName": "19C", "tripDate": "2025-03-18", "driverName": "Lâm", "tripPurpose": "Phan Thiết", "departureTime": "07:45", "departureOdometer": 285597, "arrivalTime": "15:36", "arrivalOdometer": 285731, "note": "Minh, Thanh" }
+]

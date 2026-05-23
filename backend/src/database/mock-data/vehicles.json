@@ -1,0 +1,11 @@
+[
+  { "vehicleName": "6T ISUZU", "isActive": 1 },
+  { "vehicleName": "BÁN TẢI", "isActive": 1 },
+  { "vehicleName": "7C", "isActive": 1 },
+  { "vehicleName": "19C", "isActive": 1 },
+  { "vehicleName": "6T HINO", "isActive": 1 },
+  { "vehicleName": "1.9T", "isActive": 1 },
+  { "vehicleName": "3.5T", "isActive": 1 },
+  { "vehicleName": "Xăng", "isActive": 1 },
+  { "vehicleName": "Hino", "isActive": 1 }
+]

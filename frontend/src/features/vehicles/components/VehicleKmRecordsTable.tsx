@@ -11,6 +11,10 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat('vi-VN').format(new Date(value));
 }
 
+function formatNumber(value: number) {
+  return new Intl.NumberFormat('vi-VN').format(value);
+}
+
 export function VehicleKmRecordsTable({
   deletingRecordId,
   records,
@@ -27,6 +31,8 @@ export function VehicleKmRecordsTable({
               <th className="px-4 py-3 font-semibold">Xe</th>
               <th className="px-4 py-3 font-semibold">Tài xế</th>
               <th className="px-4 py-3 font-semibold">Nội dung</th>
+              <th className="px-4 py-3 text-right font-semibold">CSĐH ra</th>
+              <th className="px-4 py-3 text-right font-semibold">CSĐH vào</th>
               <th className="px-4 py-3 text-right font-semibold">KM</th>
               <th className="px-4 py-3 text-right font-semibold">Thao tác</th>
             </tr>
@@ -45,7 +51,15 @@ export function VehicleKmRecordsTable({
                   {record.tripPurpose || '-'}
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">
-                  {record.arrivalOdometer - record.departureOdometer}
+                  {formatNumber(record.departureOdometer)}
+                </td>
+                <td className="px-4 py-3 text-right tabular-nums">
+                  {formatNumber(record.arrivalOdometer)}
+                </td>
+                <td className="px-4 py-3 text-right tabular-nums">
+                  {formatNumber(
+                    record.arrivalOdometer - record.departureOdometer,
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
@@ -71,7 +85,10 @@ export function VehicleKmRecordsTable({
 
             {records.length === 0 && (
               <tr>
-                <td className="px-4 py-10 text-center text-slate-500" colSpan={6}>
+                <td
+                  className="px-4 py-10 text-center text-slate-500"
+                  colSpan={8}
+                >
                   Chưa có dữ liệu KM xe.
                 </td>
               </tr>

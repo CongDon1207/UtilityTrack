@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Navbar } from '../../../shared/components/Navbar';
 import {
   createVehicle,
+  deleteVehicle,
   getVehicles,
   updateVehicle,
 } from '../api/vehicles';
@@ -21,6 +22,9 @@ export function VehiclesPage() {
   const [vehicleName, setVehicleName] = useState('');
   const [isActive, setIsActive] = useState<number>(1);
   const [updatingActiveId, setUpdatingActiveId] = useState<number | null>(null);
+  const [deletingVehicleId, setDeletingVehicleId] = useState<number | null>(
+    null,
+  );
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['vehicles', page, pageSize],
@@ -52,6 +56,19 @@ export function VehiclesPage() {
     },
     onSettled: () => {
       setUpdatingActiveId(null);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteVehicle,
+    onMutate: (id) => {
+      setDeletingVehicleId(id);
+    },
+    onSettled: () => {
+      setDeletingVehicleId(null);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
@@ -91,6 +108,14 @@ export function VehiclesPage() {
       vehicleName: nextVehicleName,
       isActive,
     });
+  }
+
+  function handleDelete(vehicle: Vehicle) {
+    if (!window.confirm(`Xóa xe "${vehicle.vehicleName}"?`)) {
+      return;
+    }
+
+    deleteMutation.mutate(vehicle.id);
   }
 
   return (
@@ -193,6 +218,12 @@ export function VehiclesPage() {
           </p>
         )}
 
+        {deleteMutation.error && (
+          <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {deleteMutation.error.message}
+          </p>
+        )}
+
         {isLoading ? (
           <p className="rounded-md border border-slate-200 bg-white px-4 py-8 text-center text-sm text-slate-500 shadow-sm">
             Đang tải danh sách xe...
@@ -235,6 +266,7 @@ export function VehiclesPage() {
                         <div className="flex justify-end gap-2">
                           <button
                             className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50"
+                            disabled={deletingVehicleId === vehicle.id}
                             type="button"
                             onClick={() => startEdit(vehicle)}
                           >
@@ -273,6 +305,16 @@ export function VehiclesPage() {
                                 : 'Kích hoạt'}
                             </button>
                           )}
+                          <button
+                            className="rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 bg-white hover:bg-red-50 disabled:cursor-not-allowed disabled:text-red-300"
+                            disabled={deletingVehicleId === vehicle.id}
+                            type="button"
+                            onClick={() => handleDelete(vehicle)}
+                          >
+                            {deletingVehicleId === vehicle.id
+                              ? 'Đang xóa...'
+                              : 'Xóa'}
+                          </button>
                         </div>
                       </td>
                     </tr>

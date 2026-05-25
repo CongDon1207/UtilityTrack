@@ -1,4 +1,5 @@
 [
+  { "vehicleName": "6T ISUZU", "tripDate": "2025-01-08", "driverName": "Lam", "tripPurpose": "Monthly delivery route", "departureTime": "08:00", "departureOdometer": 119820, "arrivalTime": "16:30", "arrivalOdometer": 119990, "note": "" },
   { "vehicleName": "6T ISUZU", "tripDate": "2025-04-02", "driverName": "Lâm", "tripPurpose": "Đi Bình Dương", "departureTime": "08:00", "departureOdometer": 120000, "arrivalTime": "17:00", "arrivalOdometer": 120150, "note": "" },
   { "vehicleName": "BÁN TẢI", "tripDate": "2025-04-03", "driverName": "Hoàng", "tripPurpose": "Giao hàng nhanh", "departureTime": "07:30", "departureOdometer": 85000, "arrivalTime": "18:30", "arrivalOdometer": 85120, "note": "" },
   { "vehicleName": "7C", "tripDate": "2025-04-05", "driverName": "Cường", "tripPurpose": "Chở sếp đi họp", "departureTime": "08:30", "departureOdometer": 45000, "arrivalTime": "16:00", "arrivalOdometer": 45080, "note": "" },
@@ -8,5 +9,12 @@
   { "vehicleName": "3.5T", "tripDate": "2025-04-12", "driverName": "Trí", "tripPurpose": "Chở nguyên vật liệu", "departureTime": "13:00", "departureOdometer": 78000, "arrivalTime": "17:30", "arrivalOdometer": 78110, "note": "" },
   { "vehicleName": "Hino", "tripDate": "2025-05-03", "driverName": "Cường", "tripPurpose": "Vận chuyển nội bộ", "departureTime": "08:15", "departureOdometer": 102000, "arrivalTime": "11:45", "arrivalOdometer": 102045, "note": "" },
   { "vehicleName": "19C", "tripDate": "2025-03-13", "driverName": "Hoàng", "tripPurpose": "Đi Long An", "departureTime": "07:31", "departureOdometer": 285383, "arrivalTime": "20:50", "arrivalOdometer": 285597, "note": "" },
-  { "vehicleName": "19C", "tripDate": "2025-03-18", "driverName": "Lâm", "tripPurpose": "Phan Thiết", "departureTime": "07:45", "departureOdometer": 285597, "arrivalTime": "15:36", "arrivalOdometer": 285731, "note": "Minh, Thanh" }
+  { "vehicleName": "19C", "tripDate": "2025-03-18", "driverName": "Lâm", "tripPurpose": "Phan Thiết", "departureTime": "07:45", "departureOdometer": 285597, "arrivalTime": "15:36", "arrivalOdometer": 285731, "note": "Minh, Thanh" },
+  { "vehicleName": "6T HINO", "tripDate": "2025-06-06", "driverName": "Truong", "tripPurpose": "Warehouse pickup", "departureTime": "08:45", "departureOdometer": 95180, "arrivalTime": "15:15", "arrivalOdometer": 95325, "note": "" },
+  { "vehicleName": "1.9T", "tripDate": "2025-07-08", "driverName": "Hoan", "tripPurpose": "Customer delivery", "departureTime": "08:10", "departureOdometer": 62085, "arrivalTime": "13:20", "arrivalOdometer": 62178, "note": "" },
+  { "vehicleName": "3.5T", "tripDate": "2025-08-09", "driverName": "Tri", "tripPurpose": "Material transfer", "departureTime": "09:00", "departureOdometer": 78110, "arrivalTime": "16:45", "arrivalOdometer": 78242, "note": "" },
+  { "vehicleName": "7C", "tripDate": "2025-09-10", "driverName": "Hoang", "tripPurpose": "Office supply run", "departureTime": "07:50", "departureOdometer": 45080, "arrivalTime": "11:35", "arrivalOdometer": 45142, "note": "" },
+  { "vehicleName": "19C", "tripDate": "2025-10-13", "driverName": "Lam", "tripPurpose": "Long distance delivery", "departureTime": "07:30", "departureOdometer": 285731, "arrivalTime": "18:20", "arrivalOdometer": 285940, "note": "" },
+  { "vehicleName": "Hino", "tripDate": "2025-11-14", "driverName": "Cuong", "tripPurpose": "Internal transport", "departureTime": "08:20", "departureOdometer": 102045, "arrivalTime": "12:10", "arrivalOdometer": 102118, "note": "" },
+  { "vehicleName": "7C", "tripDate": "2025-12-15", "driverName": "Cuong", "tripPurpose": "Year-end document route", "departureTime": "08:30", "departureOdometer": 45142, "arrivalTime": "15:30", "arrivalOdometer": 45227, "note": "" }
 ]

@@ -1,4 +1,7 @@
 [
+  { "vehicleName": "6T ISUZU", "fuelDate": "2025-01-06", "unitPrice": 34600, "liters": 118.20, "note": "Seeded from fuel workbook" },
+  { "vehicleName": "19C", "fuelDate": "2025-02-10", "unitPrice": 35200, "liters": 64.50, "note": "Seeded from fuel workbook" },
+  { "vehicleName": "7C", "fuelDate": "2025-03-12", "unitPrice": 34800, "liters": 42.30, "note": "Seeded from fuel workbook" },
   { "vehicleName": "6T ISUZU", "fuelDate": "2025-04-02", "unitPrice": 35440, "liters": 146.73, "note": "Seeded from fuel workbook" },
   { "vehicleName": "BÁN TẢI", "fuelDate": "2025-04-03", "unitPrice": 40820, "liters": 49.00, "note": "Seeded from fuel workbook" },
   { "vehicleName": "7C", "fuelDate": "2025-04-03", "unitPrice": 40820, "liters": 49.00, "note": "Seeded from fuel workbook" },
@@ -9,5 +12,12 @@
   { "vehicleName": "3.5T", "fuelDate": "2025-04-11", "unitPrice": 32960, "liters": 30.34, "note": "Seeded from fuel workbook" },
   { "vehicleName": "6T Isuzu", "fuelDate": "2025-05-02", "unitPrice": 36100, "liters": 120.50, "note": "Seeded from fuel workbook" },
   { "vehicleName": "Hino", "fuelDate": "2025-05-03", "unitPrice": 38200, "liters": 85.00, "note": "Seeded from fuel workbook" },
-  { "vehicleName": "Xăng", "fuelDate": "2025-05-05", "unitPrice": 22500, "liters": 15.00, "note": "Seeded from fuel workbook" }
+  { "vehicleName": "Xăng", "fuelDate": "2025-05-05", "unitPrice": 22500, "liters": 15.00, "note": "Seeded from fuel workbook" },
+  { "vehicleName": "6T HINO", "fuelDate": "2025-06-06", "unitPrice": 36500, "liters": 132.40, "note": "Seeded from fuel workbook" },
+  { "vehicleName": "1.9T", "fuelDate": "2025-07-08", "unitPrice": 35800, "liters": 48.75, "note": "Seeded from fuel workbook" },
+  { "vehicleName": "3.5T", "fuelDate": "2025-08-09", "unitPrice": 36200, "liters": 72.60, "note": "Seeded from fuel workbook" },
+  { "vehicleName": "7C", "fuelDate": "2025-09-10", "unitPrice": 35600, "liters": 38.90, "note": "Seeded from fuel workbook" },
+  { "vehicleName": "19C", "fuelDate": "2025-10-13", "unitPrice": 36800, "liters": 69.20, "note": "Seeded from fuel workbook" },
+  { "vehicleName": "Hino", "fuelDate": "2025-11-14", "unitPrice": 37100, "liters": 91.35, "note": "Seeded from fuel workbook" },
+  { "vehicleName": "6T ISUZU", "fuelDate": "2025-12-15", "unitPrice": 37200, "liters": 124.80, "note": "Seeded from fuel workbook" }
 ]

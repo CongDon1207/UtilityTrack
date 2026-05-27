@@ -89,10 +89,21 @@ export class VehiclesService {
   }
 
   async remove(id: string) {
-    const vehicle = await this.findOne(id);
+    await this.findOne(id);
 
-    vehicle.isActive = 0;
-    await this.vehiclesRepository.save(vehicle);
+    const vehicleId = Number(id);
+    const [kmRecordCount, fuelRecordCount] = await Promise.all([
+      this.vehicleKmRecordsRepository.count({ where: { vehicleId } }),
+      this.fuelRecordsRepository.count({ where: { vehicleId } }),
+    ]);
+
+    if (kmRecordCount > 0 || fuelRecordCount > 0) {
+      throw new BadRequestException(
+        'Cannot delete a vehicle that has KM or fuel records. Deactivate it instead.',
+      );
+    }
+
+    await this.vehiclesRepository.delete({ id: vehicleId });
 
     return { deleted: true };
   }

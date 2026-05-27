@@ -13,23 +13,11 @@ export function Navbar() {
           {/* Logo và Tiêu đề */}
           <div className="flex flex-1 items-center justify-between md:justify-start gap-8">
             <div className="flex flex-shrink-0 items-center">
-              <span className="text-lg font-bold tracking-tight text-slate-950 flex items-center gap-1.5">
-                <svg
-                  className="h-5 w-5 text-slate-900"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                UtilityTrack
-              </span>
+              <img
+                alt="Ultra Force"
+                className="h-12 w-auto object-contain"
+                src="/ultra-force-logo.png"
+              />
             </div>
 
             {/* Links điều hướng ngang trên Desktop */}

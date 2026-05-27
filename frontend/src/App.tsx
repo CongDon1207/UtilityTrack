@@ -29,6 +29,10 @@ function App() {
         path="/security/vehicles/km-records"
         element={<VehicleKmRecordsPage showNavbar={false} />}
       />
+      <Route
+        path="/security/vehicles/km-record"
+        element={<Navigate to="/security/vehicles/km-records" replace />}
+      />
 
       {/* Old Paths Redirects */}
       <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />

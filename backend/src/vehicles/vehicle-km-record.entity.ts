@@ -58,8 +58,13 @@ export class VehicleKmRecordEntity {
   @Column({ name: 'ARRIVAL_TIME', type: 'varchar2', length: 5, nullable: true })
   arrivalTime?: string;
 
-  @Column({ name: 'ARRIVAL_ODOMETER', type: 'number', precision: 10 })
-  arrivalOdometer!: number;
+  @Column({
+    name: 'ARRIVAL_ODOMETER',
+    type: 'number',
+    precision: 10,
+    nullable: true,
+  })
+  arrivalOdometer?: number | null;
 
   @Column({ name: 'NOTE', type: 'varchar2', length: 500, nullable: true })
   note?: string;

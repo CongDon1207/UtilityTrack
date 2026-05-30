@@ -194,6 +194,7 @@ Vehicle kilometer records:
 
 ```txt
 GET    /vehicles/km-records
+GET    /vehicles/km-records/export
 GET    /vehicles/km-records/:id
 POST   /vehicles/km-records
 PATCH  /vehicles/km-records/:id
@@ -204,6 +205,7 @@ Fuel records:
 
 ```txt
 GET    /vehicles/fuel-records
+GET    /vehicles/fuel-records/export
 GET    /vehicles/fuel-records/:id
 POST   /vehicles/fuel-records
 PATCH  /vehicles/fuel-records/:id

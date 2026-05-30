@@ -4,6 +4,7 @@ import { FuelRecordEntity } from './fuel-record.entity';
 import { VehicleKmRecordEntity } from './vehicle-km-record.entity';
 import { VehicleEntity } from './vehicle.entity';
 import { VehiclesController } from './vehicles.controller';
+import { VehiclesExportService } from './vehicles-export.service';
 import { VehiclesService } from './vehicles.service';
 
 @Module({
@@ -15,6 +16,6 @@ import { VehiclesService } from './vehicles.service';
     ]),
   ],
   controllers: [VehiclesController],
-  providers: [VehiclesService],
+  providers: [VehiclesService, VehiclesExportService],
 })
 export class VehiclesModule {}

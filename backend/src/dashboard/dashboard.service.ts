@@ -7,6 +7,14 @@ import { VehicleKmRecordEntity } from '../vehicles/vehicle-km-record.entity';
 import { VehicleEntity } from '../vehicles/vehicle.entity';
 import { DashboardQueryDto } from './dto/dashboard-query.dto';
 
+function getCompletedTripDistance(record: VehicleKmRecordEntity) {
+  if (record.arrivalOdometer === null || record.arrivalOdometer === undefined) {
+    return 0;
+  }
+
+  return Number(record.arrivalOdometer) - Number(record.departureOdometer);
+}
+
 @Injectable()
 export class DashboardService {
   constructor(
@@ -74,9 +82,7 @@ export class DashboardService {
     );
 
     const totalVehicleKm = kmFiltered.reduce(
-      (sum, r) =>
-        sum +
-        (Number(r.arrivalOdometer || 0) - Number(r.departureOdometer || 0)),
+      (sum, r) => sum + getCompletedTripDistance(r),
       0,
     );
 
@@ -146,9 +152,7 @@ export class DashboardService {
     const byVehicle = Array.from(vehicleMap.values()).map((v) => {
       const vKmRecords = kmFiltered.filter((r) => r.vehicleId === v.id);
       const vTotalKm = vKmRecords.reduce(
-        (sum, r) =>
-          sum +
-          (Number(r.arrivalOdometer || 0) - Number(r.departureOdometer || 0)),
+        (sum, r) => sum + getCompletedTripDistance(r),
         0,
       );
 
@@ -200,9 +204,7 @@ export class DashboardService {
         return date.getUTCMonth() + 1 === m;
       });
       const mKm = mKmRecords.reduce(
-        (sum, r) =>
-          sum +
-          (Number(r.arrivalOdometer || 0) - Number(r.departureOdometer || 0)),
+        (sum, r) => sum + getCompletedTripDistance(r),
         0,
       );
 

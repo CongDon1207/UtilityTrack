@@ -15,6 +15,19 @@ function formatNumber(value: number) {
   return new Intl.NumberFormat('vi-VN').format(value);
 }
 
+function getCompletedDistance(record: VehicleKmRecord) {
+  if (record.arrivalOdometer === null || record.arrivalOdometer === undefined) {
+    return null;
+  }
+
+  return record.arrivalOdometer - record.departureOdometer;
+}
+
+function formatCompletedDistance(record: VehicleKmRecord) {
+  const distance = getCompletedDistance(record);
+  return distance === null ? 'Chưa vào' : formatNumber(distance);
+}
+
 export function VehicleKmRecordsTable({
   deletingRecordId,
   records,
@@ -54,12 +67,13 @@ export function VehicleKmRecordsTable({
                   {formatNumber(record.departureOdometer)}
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">
-                  {formatNumber(record.arrivalOdometer)}
+                  {record.arrivalOdometer === null ||
+                  record.arrivalOdometer === undefined
+                    ? '-'
+                    : formatNumber(record.arrivalOdometer)}
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">
-                  {formatNumber(
-                    record.arrivalOdometer - record.departureOdometer,
-                  )}
+                  {formatCompletedDistance(record)}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">

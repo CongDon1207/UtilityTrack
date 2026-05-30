@@ -4,6 +4,7 @@ import { Navbar } from '../../../shared/components/Navbar';
 import {
   createVehicleKmRecord,
   deleteVehicleKmRecord,
+  getVehicleKmRecordsExportUrl,
   getVehicleKmRecords,
   getVehicles,
   updateVehicleKmRecord,
@@ -41,7 +42,10 @@ function getFormState(record: VehicleKmRecord): VehicleKmRecordFormState {
     departureTime: record.departureTime ?? '',
     departureOdometer: String(record.departureOdometer),
     arrivalTime: record.arrivalTime ?? '',
-    arrivalOdometer: String(record.arrivalOdometer),
+    arrivalOdometer:
+      record.arrivalOdometer === null || record.arrivalOdometer === undefined
+        ? ''
+        : String(record.arrivalOdometer),
     note: record.note ?? '',
   };
 }
@@ -83,7 +87,7 @@ export function VehicleKmRecordsPage({ showNavbar = true }: { showNavbar?: boole
   const lastKmRecordQuery = useQuery({
     enabled: selectedVehicleId > 0,
     queryKey: ['vehicle-km-records', 'last', selectedVehicleId],
-    queryFn: () => getVehicleKmRecords(1, 1, selectedVehicleId),
+    queryFn: () => getVehicleKmRecords(1, 100, selectedVehicleId),
   });
 
   const saveMutation = useMutation({
@@ -128,7 +132,16 @@ export function VehicleKmRecordsPage({ showNavbar = true }: { showNavbar?: boole
     totalKm: 0,
   };
   const lastArrivalOdometer =
-    lastKmRecordQuery.data?.data[0]?.arrivalOdometer;
+    lastKmRecordQuery.data?.data.find(
+      (record) =>
+        record.arrivalOdometer !== null &&
+        record.arrivalOdometer !== undefined,
+    )?.arrivalOdometer ?? undefined;
+  const exportUrl = getVehicleKmRecordsExportUrl({
+    vehicleId: filterVehicleId === '' ? undefined : filterVehicleId,
+    year: filterYear === '' ? undefined : filterYear,
+    month: filterMonth === '' ? undefined : filterMonth,
+  });
 
   function updateField<K extends keyof VehicleKmRecordFormState>(
     key: K,
@@ -154,16 +167,25 @@ export function VehicleKmRecordsPage({ showNavbar = true }: { showNavbar?: boole
     <main className="min-h-screen bg-slate-50 text-slate-900">
       {showNavbar && <Navbar />}
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
-        <header className="flex flex-col gap-2">
-          <p className="text-sm font-medium uppercase tracking-wide text-slate-500">
-            UtilityTrack
-          </p>
-          <h1 className="text-2xl font-semibold text-slate-950">
-            Nhập KM xe
-          </h1>
-          <p className="max-w-2xl text-sm text-slate-600">
-            Nhập thông tin xe ra vào theo sổ KM xe của bảo vệ.
-          </p>
+        <header className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-wide text-slate-500">
+              UtilityTrack
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold text-slate-950">
+              Nhập KM xe
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-slate-600">
+              Nhập thông tin xe ra vào theo sổ KM xe của bảo vệ.
+            </p>
+          </div>
+
+          <a
+            className="inline-flex w-fit rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white shadow-sm"
+            href={exportUrl}
+          >
+            Xuất Excel
+          </a>
         </header>
 
         <VehicleKmRecordForm

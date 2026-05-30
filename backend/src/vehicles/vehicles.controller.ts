@@ -7,7 +7,10 @@ import {
   Patch,
   Post,
   Query,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { VehiclesQueryDto } from './dto/vehicles-query.dto';
 import { CreateFuelRecordDto } from './dto/create-fuel-record.dto';
 import { CreateVehicleKmRecordDto } from './dto/create-vehicle-km-record.dto';
@@ -17,11 +20,15 @@ import { UpdateFuelRecordDto } from './dto/update-fuel-record.dto';
 import { UpdateVehicleKmRecordDto } from './dto/update-vehicle-km-record.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { VehicleKmRecordsQueryDto } from './dto/vehicle-km-records-query.dto';
+import { VehiclesExportService } from './vehicles-export.service';
 import { VehiclesService } from './vehicles.service';
 
 @Controller('vehicles')
 export class VehiclesController {
-  constructor(private readonly vehiclesService: VehiclesService) {}
+  constructor(
+    private readonly vehiclesService: VehiclesService,
+    private readonly vehiclesExportService: VehiclesExportService,
+  ) {}
 
   @Get()
   findAll(@Query() query: VehiclesQueryDto) {
@@ -31,6 +38,23 @@ export class VehiclesController {
   @Get('km-records')
   findAllKmRecords(@Query() query: VehicleKmRecordsQueryDto) {
     return this.vehiclesService.findAllKmRecords(query);
+  }
+
+  @Get('km-records/export')
+  async exportKmRecords(
+    @Query() query: VehicleKmRecordsQueryDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const exportedReport =
+      await this.vehiclesExportService.exportKmRecords(query);
+
+    response.set({
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="${exportedReport.filename}"`,
+    });
+
+    return new StreamableFile(exportedReport.buffer);
   }
 
   @Get('km-records/:id')
@@ -59,6 +83,23 @@ export class VehiclesController {
   @Get('fuel-records')
   findAllFuelRecords(@Query() query: FuelRecordsQueryDto) {
     return this.vehiclesService.findAllFuelRecords(query);
+  }
+
+  @Get('fuel-records/export')
+  async exportFuelRecords(
+    @Query() query: FuelRecordsQueryDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const exportedReport =
+      await this.vehiclesExportService.exportFuelRecords(query);
+
+    response.set({
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="${exportedReport.filename}"`,
+    });
+
+    return new StreamableFile(exportedReport.buffer);
   }
 
   @Get('fuel-records/:id')

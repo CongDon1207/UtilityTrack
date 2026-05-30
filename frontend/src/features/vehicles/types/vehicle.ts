@@ -33,7 +33,7 @@ export type VehicleKmRecord = {
   departureTime?: string;
   departureOdometer: number;
   arrivalTime?: string;
-  arrivalOdometer: number;
+  arrivalOdometer?: number | null;
   note?: string;
   createdAt: string;
   updatedAt: string;
@@ -47,7 +47,7 @@ export type CreateVehicleKmRecordInput = {
   departureTime?: string;
   departureOdometer: number;
   arrivalTime?: string;
-  arrivalOdometer: number;
+  arrivalOdometer?: number;
   note?: string;
 };
 

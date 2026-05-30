@@ -36,7 +36,7 @@ interface JsonKm {
   departureTime?: string;
   departureOdometer: number;
   arrivalTime?: string;
-  arrivalOdometer: number;
+  arrivalOdometer?: number | null;
   note?: string;
 }
 
@@ -298,10 +298,10 @@ async function main(): Promise<void> {
       vehicleId: number,
       dateStr: string,
       depOdo: number,
-      arrOdo: number,
+      arrOdo?: number | null,
     ) => {
       const dateOnly = new Date(dateStr).toISOString().split('T')[0];
-      return `${vehicleId}_${dateOnly}_${depOdo}_${arrOdo}`;
+      return `${vehicleId}_${dateOnly}_${depOdo}_${arrOdo ?? 'open'}`;
     };
 
     const kmMap = new Map<string, VehicleKmRecordEntity>();
@@ -322,9 +322,13 @@ async function main(): Promise<void> {
 
     for (const k of jsonKm) {
       if (
-        k.arrivalOdometer < k.departureOdometer ||
+        (k.arrivalOdometer !== null &&
+          k.arrivalOdometer !== undefined &&
+          k.arrivalOdometer < k.departureOdometer) ||
         k.departureOdometer < 0 ||
-        k.arrivalOdometer < 0 ||
+        (k.arrivalOdometer !== null &&
+          k.arrivalOdometer !== undefined &&
+          k.arrivalOdometer < 0) ||
         !k.vehicleName ||
         !k.tripDate
       ) {

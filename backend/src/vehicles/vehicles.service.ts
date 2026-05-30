@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, FindOptionsWhere, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, Raw, Repository } from 'typeorm';
 import { CreateFuelRecordDto } from './dto/create-fuel-record.dto';
 import { CreateVehicleKmRecordDto } from './dto/create-vehicle-km-record.dto';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
@@ -17,6 +17,14 @@ import { VehicleKmRecordsQueryDto } from './dto/vehicle-km-records-query.dto';
 import { FuelRecordEntity } from './fuel-record.entity';
 import { VehicleKmRecordEntity } from './vehicle-km-record.entity';
 import { VehicleEntity } from './vehicle.entity';
+
+function getCompletedTripDistance(record: VehicleKmRecordEntity) {
+  if (record.arrivalOdometer === null || record.arrivalOdometer === undefined) {
+    return 0;
+  }
+
+  return Number(record.arrivalOdometer) - Number(record.departureOdometer);
+}
 
 @Injectable()
 export class VehiclesService {
@@ -117,14 +125,8 @@ export class VehiclesService {
     if (query.vehicleId) {
       whereClause.vehicleId = query.vehicleId;
     }
-    if (query.year) {
-      const start = new Date(
-        Date.UTC(query.year, query.month ? query.month - 1 : 0, 1, 0, 0, 0, 0),
-      );
-      const end = query.month
-        ? new Date(Date.UTC(query.year, query.month, 0, 23, 59, 59, 999))
-        : new Date(Date.UTC(query.year, 11, 31, 23, 59, 59, 999));
-      whereClause.tripDate = Between(start, end);
+    if (query.year || query.month) {
+      whereClause.tripDate = this.buildDateFilter(query.year, query.month);
     }
 
     const [records, total] = await this.vehicleKmRecordsRepository.findAndCount(
@@ -148,9 +150,7 @@ export class VehiclesService {
     });
 
     const totalKm = allMatchingRecords.reduce(
-      (sum, r) =>
-        sum +
-        (Number(r.arrivalOdometer || 0) - Number(r.departureOdometer || 0)),
+      (sum, r) => sum + getCompletedTripDistance(r),
       0,
     );
 
@@ -240,14 +240,8 @@ export class VehiclesService {
     if (query.vehicleId) {
       whereClause.vehicleId = query.vehicleId;
     }
-    if (query.year) {
-      const start = new Date(
-        Date.UTC(query.year, query.month ? query.month - 1 : 0, 1, 0, 0, 0, 0),
-      );
-      const end = query.month
-        ? new Date(Date.UTC(query.year, query.month, 0, 23, 59, 59, 999))
-        : new Date(Date.UTC(query.year, 11, 31, 23, 59, 59, 999));
-      whereClause.fuelDate = Between(start, end);
+    if (query.year || query.month) {
+      whereClause.fuelDate = this.buildDateFilter(query.year, query.month);
     }
 
     const [records, total] = await this.fuelRecordsRepository.findAndCount({
@@ -353,12 +347,33 @@ export class VehiclesService {
 
   private validateOdometerOrder(
     departureOdometer: number,
-    arrivalOdometer: number,
+    arrivalOdometer?: number | null,
   ) {
+    if (arrivalOdometer === null || arrivalOdometer === undefined) {
+      return;
+    }
+
     if (arrivalOdometer < departureOdometer) {
       throw new BadRequestException(
         'Arrival odometer must be greater than or equal to departure odometer',
       );
     }
+  }
+
+  private buildDateFilter(year?: number, month?: number) {
+    if (year) {
+      const start = new Date(
+        Date.UTC(year, month ? month - 1 : 0, 1, 0, 0, 0, 0),
+      );
+      const end = month
+        ? new Date(Date.UTC(year, month, 0, 23, 59, 59, 999))
+        : new Date(Date.UTC(year, 11, 31, 23, 59, 59, 999));
+
+      return Between(start, end);
+    }
+
+    return Raw((alias) => `EXTRACT(MONTH FROM ${alias}) = :month`, {
+      month,
+    });
   }
 }

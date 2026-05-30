@@ -63,7 +63,7 @@ FUEL_RECORDS
 | `departure_time` | Departure time | Comes from the departure time column in `KM_xe.xlsx`. |
 | `departure_odometer` | Departure odometer reading | Comes from the departure odometer column in `KM_xe.xlsx`. |
 | `arrival_time` | Arrival time | Comes from the arrival time column in `KM_xe.xlsx`. |
-| `arrival_odometer` | Arrival odometer reading | Comes from the arrival odometer column in `KM_xe.xlsx`. |
+| `arrival_odometer` | Arrival odometer reading | Optional while the vehicle is still away; completed trips use it to calculate distance. |
 | `note` | Optional note | Comes from the note column in `KM_xe.xlsx`. |
 | `created_at` | Creation timestamp | Set when the record is created. |
 | `updated_at` | Last update timestamp | Updated when the record changes. |
@@ -86,7 +86,7 @@ FUEL_RECORDS
 - `VEHICLES` is kept intentionally small because the current source files only provide a vehicle label.
 - `vehicle_name` is used instead of separate `vehicle_code` and `vehicle_name` fields because the current source data does not have a separate official vehicle code.
 - `VEHICLE_KM_RECORDS` and `FUEL_RECORDS` are separate tables because kilometer trips are entered by security while fuel records are entered by general affairs.
-- `distance_km` is not stored because it can be calculated as `arrival_odometer - departure_odometer`.
+- `distance_km` is not stored because it can be calculated as `arrival_odometer - departure_odometer` after a trip is completed.
 - `total_amount` is not stored because it can be calculated as `unit_price * liters`.
 - Dashboard values such as `km_per_liter` and `cost_per_km` should be calculated in report queries or API responses instead of duplicated in the tables.
 
@@ -96,8 +96,8 @@ FUEL_RECORDS
 - `is_active` should be required and limited to `0` or `1`.
 - `vehicle_id` should be required in both record tables.
 - `trip_date` should be required for kilometer records.
-- `departure_odometer` and `arrival_odometer` should be required integer values and greater than or equal to `0`.
-- `arrival_odometer` should be greater than or equal to `departure_odometer`.
+- `departure_odometer` should be required and greater than or equal to `0`.
+- `arrival_odometer` should be optional while the vehicle is away. When provided, it should be greater than or equal to `departure_odometer`.
 - `fuel_date` should be required for fuel records.
 - `unit_price` should be a required integer value and greater than or equal to `0`.
 - `liters` should be required and greater than or equal to `0`.

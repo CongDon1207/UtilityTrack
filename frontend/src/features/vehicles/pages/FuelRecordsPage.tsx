@@ -4,6 +4,7 @@ import { Navbar } from '../../../shared/components/Navbar';
 import {
   createFuelRecord,
   deleteFuelRecord,
+  getFuelRecordsExportUrl,
   getFuelRecords,
   getVehicles,
   updateFuelRecord,
@@ -107,6 +108,11 @@ export function FuelRecordsPage() {
     totalCost: 0,
     avgUnitPrice: 0,
   };
+  const exportUrl = getFuelRecordsExportUrl({
+    vehicleId: filterVehicleId === '' ? undefined : filterVehicleId,
+    year: filterYear === '' ? undefined : filterYear,
+    month: filterMonth === '' ? undefined : filterMonth,
+  });
 
   function updateField<K extends keyof FuelRecordFormState>(
     key: K,
@@ -132,16 +138,25 @@ export function FuelRecordsPage() {
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
-        <header className="flex flex-col gap-2">
-          <p className="text-sm font-medium uppercase tracking-wide text-slate-500">
-            UtilityTrack
-          </p>
-          <h1 className="text-2xl font-semibold text-slate-950">
-            Nhập đổ dầu
-          </h1>
-          <p className="max-w-2xl text-sm text-slate-600">
-            Nhập dữ liệu đổ dầu theo xe, đơn giá và số lít.
-          </p>
+        <header className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-wide text-slate-500">
+              UtilityTrack
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold text-slate-950">
+              Nhập đổ dầu
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-slate-600">
+              Nhập dữ liệu đổ dầu theo xe, đơn giá và số lít.
+            </p>
+          </div>
+
+          <a
+            className="inline-flex w-fit rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white shadow-sm"
+            href={exportUrl}
+          >
+            Xuất Excel
+          </a>
         </header>
 
         <FuelRecordForm

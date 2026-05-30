@@ -14,6 +14,42 @@ import type {
   VehiclesResponse,
 } from '../types/vehicle';
 
+type VehicleRecordsExportQuery = {
+  vehicleId?: number;
+  year?: number;
+  month?: number;
+};
+
+function buildVehicleRecordsParams({
+  vehicleId,
+  year,
+  month,
+}: VehicleRecordsExportQuery) {
+  const params = new URLSearchParams();
+
+  if (vehicleId) {
+    params.set('vehicleId', String(vehicleId));
+  }
+  if (year) {
+    params.set('year', String(year));
+  }
+  if (month) {
+    params.set('month', String(month));
+  }
+
+  return params;
+}
+
+export function getVehicleKmRecordsExportUrl(query: VehicleRecordsExportQuery) {
+  const params = buildVehicleRecordsParams(query);
+  return `${API_BASE_URL}/vehicles/km-records/export?${params.toString()}`;
+}
+
+export function getFuelRecordsExportUrl(query: VehicleRecordsExportQuery) {
+  const params = buildVehicleRecordsParams(query);
+  return `${API_BASE_URL}/vehicles/fuel-records/export?${params.toString()}`;
+}
+
 export async function getVehicles(
   page = 1,
   limit = 10,

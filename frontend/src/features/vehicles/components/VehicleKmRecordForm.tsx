@@ -1,3 +1,4 @@
+import { useState, type FormEvent } from 'react';
 import type { CreateVehicleKmRecordInput, Vehicle, VehicleKmRecord } from '../types/vehicle';
 
 export type VehicleKmRecordFormState = {
@@ -38,8 +39,22 @@ export function VehicleKmRecordForm({
   onSubmit,
   onUpdateField,
 }: VehicleKmRecordFormProps) {
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const [odometerError, setOdometerError] = useState<string | null>(null);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    const departureOdometer = Number(formData.departureOdometer);
+    const arrivalOdometer = Number(formData.arrivalOdometer);
+
+    if (departureOdometer > arrivalOdometer) {
+      setOdometerError(
+        'CSDH ra không được lớn hơn CSDH vào. Vui lòng nhập lại vì CSDH vào phải lớn hơn hoặc bằng CSDH ra.',
+      );
+      return;
+    }
+
+    setOdometerError(null);
 
     onSubmit({
       vehicleId: Number(formData.vehicleId),
@@ -47,9 +62,9 @@ export function VehicleKmRecordForm({
       driverName: formData.driverName.trim() || undefined,
       tripPurpose: formData.tripPurpose.trim() || undefined,
       departureTime: formData.departureTime || undefined,
-      departureOdometer: Number(formData.departureOdometer),
+      departureOdometer,
       arrivalTime: formData.arrivalTime || undefined,
-      arrivalOdometer: Number(formData.arrivalOdometer),
+      arrivalOdometer,
       note: formData.note.trim() || undefined,
     });
   }
@@ -170,19 +185,28 @@ export function VehicleKmRecordForm({
         <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
           CSĐH vào
           <input
-            className="rounded-md border border-slate-300 px-3 py-2 text-slate-950 outline-none focus:border-slate-900"
+            className={`rounded-md border px-3 py-2 text-slate-950 outline-none focus:border-slate-900 ${
+              odometerError ? 'border-red-300' : 'border-slate-300'
+            }`}
             inputMode="numeric"
             min="0"
             required
             step="1"
             type="number"
             value={formData.arrivalOdometer}
-            onChange={(event) =>
-              onUpdateField('arrivalOdometer', event.target.value)
-            }
+            onChange={(event) => {
+              setOdometerError(null);
+              onUpdateField('arrivalOdometer', event.target.value);
+            }}
           />
         </label>
       </div>
+
+      {odometerError && (
+        <p className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {odometerError}
+        </p>
+      )}
 
       <label className="mt-4 flex flex-col gap-1.5 text-sm font-medium text-slate-700">
         Ghi chú

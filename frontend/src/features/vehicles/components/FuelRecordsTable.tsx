@@ -30,6 +30,7 @@ export function FuelRecordsTable({
               <th className="px-4 py-3 text-right font-semibold">Đơn giá</th>
               <th className="px-4 py-3 text-right font-semibold">Số lít</th>
               <th className="px-4 py-3 text-right font-semibold">Số tiền</th>
+              <th className="px-4 py-3 font-semibold">Ghi chú</th>
               <th className="px-4 py-3 text-right font-semibold">Thao tác</th>
             </tr>
           </thead>
@@ -48,6 +49,9 @@ export function FuelRecordsTable({
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">
                   {numberFormatter.format(record.unitPrice * record.liters)}
+                </td>
+                <td className="max-w-64 px-4 py-3 text-slate-700">
+                  {record.note || '-'}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
@@ -73,7 +77,7 @@ export function FuelRecordsTable({
 
             {records.length === 0 && (
               <tr>
-                <td className="px-4 py-10 text-center text-slate-500" colSpan={6}>
+                <td className="px-4 py-10 text-center text-slate-500" colSpan={7}>
                   Chưa có dữ liệu đổ dầu.
                 </td>
               </tr>

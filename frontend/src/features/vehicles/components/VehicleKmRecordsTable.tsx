@@ -28,6 +28,10 @@ function formatCompletedDistance(record: VehicleKmRecord) {
   return distance === null ? 'Chưa vào' : formatNumber(distance);
 }
 
+function isOpenRecord(record: VehicleKmRecord) {
+  return record.arrivalOdometer === null || record.arrivalOdometer === undefined;
+}
+
 export function VehicleKmRecordsTable({
   deletingRecordId,
   records,
@@ -52,7 +56,12 @@ export function VehicleKmRecordsTable({
           </thead>
           <tbody className="divide-y divide-slate-100">
             {records.map((record) => (
-              <tr key={record.id} className="align-top">
+              <tr
+                key={record.id}
+                className={`align-top ${
+                  isOpenRecord(record) ? 'bg-amber-50' : 'bg-white'
+                }`}
+              >
                 <td className="px-4 py-3">{formatDate(record.tripDate)}</td>
                 <td className="px-4 py-3 font-medium text-slate-950">
                   {record.vehicle.vehicleName}
@@ -67,8 +76,7 @@ export function VehicleKmRecordsTable({
                   {formatNumber(record.departureOdometer)}
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">
-                  {record.arrivalOdometer === null ||
-                  record.arrivalOdometer === undefined
+                  {isOpenRecord(record)
                     ? '-'
                     : formatNumber(record.arrivalOdometer)}
                 </td>

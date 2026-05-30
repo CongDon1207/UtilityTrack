@@ -138,7 +138,7 @@ export function FuelRecordsPage() {
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
-        <header className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <header className="flex flex-col gap-2">
           <div>
             <p className="text-sm font-medium uppercase tracking-wide text-slate-500">
               UtilityTrack
@@ -150,13 +150,6 @@ export function FuelRecordsPage() {
               Nhập dữ liệu đổ dầu theo xe, đơn giá và số lít.
             </p>
           </div>
-
-          <a
-            className="inline-flex w-fit rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white shadow-sm"
-            href={exportUrl}
-          >
-            Xuất Excel
-          </a>
         </header>
 
         <FuelRecordForm
@@ -226,6 +219,15 @@ export function FuelRecordsPage() {
                 ))}
               </select>
             </label>
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <a
+              className="inline-flex w-fit rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white shadow-sm"
+              href={exportUrl}
+            >
+              Xuất Excel
+            </a>
           </div>
         </section>
 

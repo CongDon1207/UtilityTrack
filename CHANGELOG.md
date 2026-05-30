@@ -9,3 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2026-05-27]
 - **Fix**: Vehicle deletion at `backend/src/vehicles/vehicles.service.ts` - Deletes vehicles without related KM or fuel records and blocks deletion when history exists (completed).
+
+## [2026-05-30]
+- **Change**: Disable automatic TypeORM schema synchronization by default at `backend/src/app.module.ts` - Prevents unintended database schema changes unless `TYPEORM_SYNCHRONIZE=true` is explicitly set (completed).
+- **Remove**: Obsolete backend E2E scaffold at `backend/test` - Removes unsafe AppModule-based E2E test script and files (completed).

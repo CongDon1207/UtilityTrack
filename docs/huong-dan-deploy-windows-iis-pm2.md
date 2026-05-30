@@ -221,13 +221,13 @@ Trong frontend, tạo hoặc sửa file:
 Ví dụ:
 
 ```env
-VITE_API_URL=http://192.168.4.172:3000
+VITE_API_BASE_URL=http://192.168.4.172:3000
 ```
 
 Lưu ý: không nên để như sau khi deploy LAN:
 
 ```env
-VITE_API_URL=http://localhost:3000
+VITE_API_BASE_URL=http://localhost:3000
 ```
 
 Vì khi máy user truy cập, `localhost` sẽ là máy của user, không phải server.

@@ -76,7 +76,7 @@ export function VehicleKmRecordsTable({
                   {formatNumber(record.departureOdometer)}
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">
-                  {isOpenRecord(record)
+                  {isOpenRecord(record) || record.arrivalOdometer == null
                     ? '-'
                     : formatNumber(record.arrivalOdometer)}
                 </td>
